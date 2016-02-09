@@ -43,7 +43,41 @@ public class Trivial extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+        if(args.length > 0){
+            if(args[0].equals("editar")){ //Creación y edición de preguntas y respuestas para el trivial.
+                System.out.println("Estás en el modo de edición del Trivial");
+                byte option = 0;
+                final String menu = "    1. Añadir una pregunta.\n"
+                        + "    2. Listar todas las preguntas y respuestas\n"
+                        + "    3. Buscar una pregunta y su respuesta.\n"
+                        + "    4  Modificar una pregunta y su respuesta.\n"
+                        + "    5. Borrar una pregunta y su respuesta.\n"
+                        + "    6. Borrar todas las preguntas y respuestas.\n"
+                        + "    7. Salir del programa.\n";
+                while(option != 7){
+                    option = Input.byteInput("¿Qué quieres hacer?\n" + menu + "\n>>> ");
+                    switch(option){
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            break;
+                        case 5:
+                            break;
+                        case 6:
+                            break;
+                        case 7:
+                            System.exit(0);
+                            break;                          
+                    }
+                }
+            }
+        }
+        else{
+            launch(args);
+        }
     }
-    
 }
