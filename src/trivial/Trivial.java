@@ -16,23 +16,27 @@ import javafx.stage.Stage;
  * @author Jorge Maldonado Ventura
  */
 public class Trivial extends Application {
+    GridPane grid;
+    GameLoop gameLoop;
     
     @Override
     public void start(Stage primaryStage) {
-        
-        Button btn = new Button();
-        
         Square[] board = Board.createBoard();
         
+        grid = Board.drawSquares(board, new GridPane());
+        grid.setVisible(true);
         
-        
-        GridPane grid = new GridPane();
-        
-        Scene scene = new Scene(grid, 300, 250);
+  
+        Scene scene = new Scene(grid, Board.WIDTH, Board.HEIGHT);
         
         primaryStage.setTitle("Trivial");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+       // createStartGameLoop();
+    }
+    public void createStartGameLoop(){
+        gameLoop.start();
     }
 
     /**
