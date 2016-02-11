@@ -23,9 +23,11 @@ import java.util.List;
  *
  * @author Jorge Maldonado Ventura 
  */
-public class MultipleAnswerQuestion extends Answer{
+public class SimpleQuestion extends Answer{
+
     @Override
     public void check(int code) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
 }

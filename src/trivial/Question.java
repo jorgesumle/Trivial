@@ -17,15 +17,36 @@
 
 package trivial;
 
-import java.util.List;
-
 /**
  *
  * @author Jorge Maldonado Ventura 
  */
-public class MultipleAnswerQuestion extends Answer{
-    @Override
-    public void check(int code) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+abstract class Question {
+    public final int code;
+    public final String question;
+    public final byte type;
+
+    public Question(int code, String question, byte type) {
+        this.code = code;
+        this.question = question;
+        this.type = type;
     }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public byte getType() {
+        return type;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" + "code=" + code + ", question=" + question + ", type=" + type + '}';
+    }
+    
 }
