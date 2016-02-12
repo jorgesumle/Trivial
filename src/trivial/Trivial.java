@@ -121,12 +121,9 @@ public class Trivial extends Application {
                                         answerObj = new SimpleAnswer(questionObj.getCode(), questionObj.isDeleted(), answer);
                                         try{
                                             RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
-                                            long sizeOfQuestionsFile = raf.length();
+                                            long sizeOfQuestionsFile = raf.length();                                          
                                             raf.seek(sizeOfQuestionsFile);
-                                            raf.writeInt(answerObj.getCode());
-                                            raf.writeBoolean(answerObj.isDeleted());
-                                            raf.writeUTF(answerObj.getAnswer());
-                                            
+                                            answerObj.answerWriter(raf);
                                             raf.close();
                                         } catch (FileNotFoundException ex) {
                                             Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
@@ -141,27 +138,24 @@ public class Trivial extends Application {
                                                 System.out.println("Las respuestas permitidas son 'sí', 'no', 'si', 's' y 'n'. Prueba de  nuevo.");
                                             }
                                         } while(!(answer.equals("sí") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n")));
-                                        boolean answerBoolean;
+                                       
                                         if(answer.equals("sí") || answer.equals("si") || answer.equals("s")){
-                                            answerBoolean = true;
+                                            answer = "s";
                                         } else{
-                                            answerBoolean = false;
+                                            answer = "n";
                                         }
-                                        answerObj = new YesOrNoAnswer(code, false, answerBoolean);
+                                        answerObj = new YesOrNoAnswer(code, false, answer);
                                         try{
                                             RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
                                             long sizeOfQuestionsFile = raf.length();
                                             raf.seek(sizeOfQuestionsFile);
-                                            raf.writeInt(answerObj.getCode());
-                                            raf.writeBoolean(answerObj.isDeleted());
-                                            raf.writeBoolean(answerObj.isAnswerBoolean());
+                                            answerObj.answerWriter(raf);
                                             raf.close();
                                         } catch (FileNotFoundException ex) {
                                             Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
                                         } catch (IOException ex) {
                                             Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
                                         }
-                                        
                                         break;
                                     case 3:
                                         boolean noMistake = false;
@@ -188,6 +182,15 @@ public class Trivial extends Application {
                                                     + "    1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%n>>> ", answer, answer2, answer3, answer4, answer5));
                                         } while(noMistake);
                                         answerObj = new MultipleAnswer(code, false, answer, answer2, answer3, answer4, answer5);
+                                        try{
+                                            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
+                                            long sizeOfQuestionsFile = raf.length();
+                                            raf.seek(sizeOfQuestionsFile);
+                                            answerObj.answerWriter(raf);
+                                            raf.close();
+                                        } catch (IOException ex) {
+                                            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
                                         break;
                                     case 4:
                                         String simpleQuestionExample = "¿En qué año nació Francisco Ibáñez? [pregunta] 1936 [respuesta]";
