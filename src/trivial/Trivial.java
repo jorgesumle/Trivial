@@ -83,6 +83,7 @@ public class Trivial extends Application {
                                     + "    5) Volver al menú anterior\n"
                                     + ">>> "
                                 );
+                                int code = 0;
                                 if(type == 1 || type == 2 || type == 3){
                                     String question = String.format("%" + QUESTION_LENGTH + "s" , Input.input("Escribe la pregunta\n>>> "));
                                     try{
@@ -93,7 +94,7 @@ public class Trivial extends Application {
                                         for (int i = 0; i < sizeOfQuestionsFile; i = i + OFFSET) {
                                             indexesUsed.add(Input.readIntegerByRandomAccess(i, questionsFile));
                                         }
-                                        Integer code = 0;
+                                       
                                         if(!indexesUsed.isEmpty()){
                                             code = indexesUsed.get(indexesUsed.size() - 1);
                                         }
@@ -103,13 +104,8 @@ public class Trivial extends Application {
 
                                         questionObj = new Question(code, question);
 
-                                        //#código pregunta, borrada, pregunta.
-                                        raf.writeInt(questionObj.getCode());
-                                        raf.writeBoolean(questionObj.isDeleted());
-                                        raf.writeUTF(questionObj.getQuestion());
-                                        //Output.writeIntegerByRandomAccess(raf, questionObj.getCode());
-                                        //Output.writeBooleanByRandomAccess(raf, questionObj.isDeleted());
-                                        //Output.writeUTFByRandomAccess(raf, questionObj.getQuestion());
+                                        questionObj.writeQuestion(raf);
+
                                         raf.close();
 
                                     } catch (FileNotFoundException ex) {
@@ -122,13 +118,11 @@ public class Trivial extends Application {
                                 switch(type){
                                     case 1:
                                         String answer = String.format("%" + ANSWER_LENGTH + "s", Input.input("Escribe la respuesta.\n>>> "));
+                                        answerObj = new SimpleAnswer(questionObj.getCode(), questionObj.isDeleted(), answer);
                                         try{
                                             RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
                                             long sizeOfQuestionsFile = raf.length();
                                             raf.seek(sizeOfQuestionsFile);
-                                            
-                                            answerObj = new SimpleAnswer(questionObj.getCode(), questionObj.isDeleted(), answer);
-                                            
                                             raf.writeInt(answerObj.getCode());
                                             raf.writeBoolean(answerObj.isDeleted());
                                             raf.writeUTF(answerObj.getAnswer());
@@ -140,8 +134,61 @@ public class Trivial extends Application {
                                             Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                         break;
-                                    case 2: break;
-                                    case 3: break;
+                                    case 2:
+                                        do{
+                                            answer = Input.input("¿La respuesta es 'sí' o 'no' ('s' o 'n')?\n>>> ");
+                                            if(!(answer.equals("sí") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n"))){
+                                                System.out.println("Las respuestas permitidas son 'sí', 'no', 'si', 's' y 'n'. Prueba de  nuevo.");
+                                            }
+                                        } while(!(answer.equals("sí") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n")));
+                                        boolean answerBoolean;
+                                        if(answer.equals("sí") || answer.equals("si") || answer.equals("s")){
+                                            answerBoolean = true;
+                                        } else{
+                                            answerBoolean = false;
+                                        }
+                                        answerObj = new YesOrNoAnswer(code, false, answerBoolean);
+                                        try{
+                                            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
+                                            long sizeOfQuestionsFile = raf.length();
+                                            raf.seek(sizeOfQuestionsFile);
+                                            raf.writeInt(answerObj.getCode());
+                                            raf.writeBoolean(answerObj.isDeleted());
+                                            raf.writeBoolean(answerObj.isAnswerBoolean());
+                                            raf.close();
+                                        } catch (FileNotFoundException ex) {
+                                            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+                                        } catch (IOException ex) {
+                                            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        
+                                        break;
+                                    case 3:
+                                        boolean noMistake = false;
+                                        String answer2;
+                                        String answer3;
+                                        String answer4;
+                                        String answer5;
+                                        do{
+                                            System.out.println("Primero debes introducir todas las posibles respuestas. "
+                                                    + "Después tendrás que especificar cuál es la correcta");
+                                            answer = Input.input("Introduce la primera respuesta\n>>> ");
+                                            answer2 = Input.input("Introduce la segunda respuesta\n>>> ");
+                                            answer3 = Input.input("Introduce la tercera respuesta\n>>> ");
+                                            answer4 = Input.input("Introduce la cuarta respuesta\n>>> ");
+                                            answer5 = Input.input("Introduce la quinta respuesta\n>>> ");
+                                            
+                                            String again = Input.input(String.format("Estas son las preguntas que has introducido:%n"
+                                                    + " 1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%nEscribe 's' si has cometido algún error y "
+                                                    + "quieres introducir de nuevo las respuestas.%n>>> ", answer, answer2, answer3, answer4, answer5));
+                                            if(again.equals("s")){
+                                                continue;
+                                            }
+                                            byte correctAnswer = Input.byteInput(String.format("¿Cuál de las respuestas que has introducido es la correcta?"
+                                                    + "    1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%n>>> ", answer, answer2, answer3, answer4, answer5));
+                                        } while(noMistake);
+                                        answerObj = new MultipleAnswer(code, false, answer, answer2, answer3, answer4, answer5);
+                                        break;
                                     case 4:
                                         String simpleQuestionExample = "¿En qué año nació Francisco Ibáñez? [pregunta] 1936 [respuesta]";
                                         String yesOrNoQuestionExample = "¿Francisco Ibáñez nació en 1936? [pregunta] 'Sí' o 'No' [posibles respuestas].";
@@ -153,10 +200,15 @@ public class Trivial extends Application {
                                     case 5: break; 
                                 }
                             } while(type != 5);
-                            
-                        
                             break;
                         case 2:
+                            try{
+                                RandomAccessFile raf = new RandomAccessFile(questionsFile, "r");
+                                
+                                raf.close();
+                            } catch (IOException ex) {
+                                Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             break;
                         case 3:
                             break;
