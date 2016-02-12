@@ -8,6 +8,7 @@ package trivial;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -22,8 +23,6 @@ import javafx.stage.Stage;
 public class Trivial extends Application {
     GridPane grid;
     GameLoop gameLoop;
-    static String questionsFile = "preguntas.dat";
-    static String answersFile = "respuestas.dat";
     
     @Override
     public void start(Stage primaryStage) {
@@ -60,6 +59,16 @@ public class Trivial extends Application {
                         + "    6. Borrar todas las preguntas y respuestas.\n"
                         + "    7. Salir del programa.\n";
                 byte option = 0;
+                
+                final byte ANSWER_LENGTH = 30;
+                final byte QUESTION_LENGTH = 120;
+                //Cuidado al modificar OFFSET, podría desbordarse la variable byte.
+                final byte OFFSET = QUESTION_LENGTH + 1 + 4; //código pregunta, borrada, pregunta
+                String answersFile = "respuestas.dat";
+                String questionsFile = "preguntas.dat";
+                
+                Question questionObj = null;
+
                 do{
                     option = Input.byteInput("¿Qué quieres hacer?\n" + menu + ">>> ");
                     switch(option){
@@ -74,26 +83,62 @@ public class Trivial extends Application {
                                     + "    5) Volver al menú anterior\n"
                                     + ">>> "
                                 );
-                                
+                                if(type == 1 || type == 2 || type == 3){
+                                    String question = String.format("%" + QUESTION_LENGTH + "s" , Input.input("Escribe la pregunta\n>>> "));
+                                    try{
+                                        RandomAccessFile raf = new RandomAccessFile(questionsFile, "rw");
+                                        long sizeOfQuestionsFile = raf.length();
+                                        raf.seek(sizeOfQuestionsFile); //Escribe al final del ficehro.
+                                        ArrayList<Integer> indexesUsed = new ArrayList<>();
+                                        for (int i = 0; i < sizeOfQuestionsFile; i = i + OFFSET) {
+                                            indexesUsed.add(Input.readIntegerByRandomAccess(i, questionsFile));
+                                        }
+                                        Integer code = 0;
+                                        if(!indexesUsed.isEmpty()){
+                                            code = indexesUsed.get(indexesUsed.size() - 1);
+                                        }
+                                        do {
+                                            code++;
+                                        } while (indexesUsed.contains(code));
+
+                                        questionObj = new Question(code, question);
+
+                                        //#código pregunta, borrada, pregunta.
+                                        raf.writeInt(questionObj.getCode());
+                                        raf.writeBoolean(questionObj.isDeleted());
+                                        raf.writeUTF(questionObj.getQuestion());
+                                        //Output.writeIntegerByRandomAccess(raf, questionObj.getCode());
+                                        //Output.writeBooleanByRandomAccess(raf, questionObj.isDeleted());
+                                        //Output.writeUTFByRandomAccess(raf, questionObj.getQuestion());
+                                        raf.close();
+
+                                    } catch (FileNotFoundException ex) {
+                                        Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                                Answer answerObj = null;
                                 switch(type){
                                     case 1:
-                                        String question = Input.input("Escribe la pregunta\n>>> ");
+                                        String answer = String.format("%" + ANSWER_LENGTH + "s", Input.input("Escribe la respuesta.\n>>> "));
                                         try{
-                                            RandomAccessFile raf = new RandomAccessFile(questionsFile, "w");
-                                            long size = raf.length();
-                                            raf.seek(size);
-                                            new SimpleQuestion();
+                                            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
+                                            long sizeOfQuestionsFile = raf.length();
+                                            raf.seek(sizeOfQuestionsFile);
                                             
+                                            answerObj = new SimpleAnswer(questionObj.getCode(), questionObj.isDeleted(), answer);
                                             
+                                            raf.writeInt(answerObj.getCode());
+                                            raf.writeBoolean(answerObj.isDeleted());
+                                            raf.writeUTF(answerObj.getAnswer());
+                                            
+                                            raf.close();
                                         } catch (FileNotFoundException ex) {
                                             Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
                                         } catch (IOException ex) {
                                             Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
                                         }
-                                        
-                                        
-                                        
-                                        
                                         break;
                                     case 2: break;
                                     case 3: break;
