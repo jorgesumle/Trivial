@@ -3,7 +3,7 @@
  *
  * Este programa es software libre: usted puede redistruirlo y/o modificarlo
  * bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
- * la Free Software Foundation; ya sea la versión 2 de la Licencia, o
+ * la Free Software Foundation; ya sea la versión 3 de la Licencia, o
  * (a su elección) cualquier versión posterior.
  *
  * Este programa se distribuye con la intención de ser útil,

@@ -1,16 +1,21 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2016 Jorge Maldonado Ventura 
+ *
+ * Este programa es software libre: usted puede redistruirlo y/o modificarlo
+ * bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
+ * la Free Software Foundation; ya sea la versión 3 de la Licencia, o
+ * (a su elección) cualquier versión posterior.
+ *
+ * Este programa se distribuye con la intención de ser útil,
+ * pero SIN NINGUNA GARANTÍA; incluso sin la garantía implícita de
+ * USABILIDAD O UTILIDAD PARA UN FIN PARTICULAR. Vea la
+ * Licencia Pública General GNU para más detalles.
+ *
+ * Usted debería haber recibido una copia de la Licencia Pública General GNU
+ * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
  */
 package trivial;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -45,7 +50,11 @@ public class Trivial extends Application {
     }
 
     /**
-     * @param args the command line arguments
+     * 
+     * @param args especifica el modo de juego que se ejecutara.
+     * Si no se pasa ningún parámetro se iniciará el juego del Trivial.
+     * Si se pasa el parámetro "editar" se lanzará el modo de edición del Trivial,
+     * el cual permite administrar las preguntas y respuestas que aparecerán en el juego.
      */
     public static void main(String[] args) {
         if(args.length > 0){
@@ -59,16 +68,6 @@ public class Trivial extends Application {
                         + "    6. Borrar todas las preguntas y respuestas.\n"
                         + "    7. Salir del programa.\n";
                 byte option = 0;
-                
-                final byte ANSWER_LENGTH = 30;
-                final byte QUESTION_LENGTH = 120;
-                //Cuidado al modificar OFFSET, podría desbordarse la variable byte.
-                final byte OFFSET = QUESTION_LENGTH + 1 + 4; //código pregunta, borrada, pregunta
-                String answersFile = "respuestas.dat";
-                String questionsFile = "preguntas.dat";
-                
-                Question questionObj = null;
-
                 do{
                     option = Input.byteInput("¿Qué quieres hacer?\n" + menu + ">>> ");
                     switch(option){
@@ -83,114 +82,19 @@ public class Trivial extends Application {
                                     + "    5) Volver al menú anterior\n"
                                     + ">>> "
                                 );
-                                int code = 0;
                                 if(type == 1 || type == 2 || type == 3){
-                                    String question = String.format("%" + QUESTION_LENGTH + "s" , Input.input("Escribe la pregunta\n>>> "));
-                                    try{
-                                        RandomAccessFile raf = new RandomAccessFile(questionsFile, "rw");
-                                        long sizeOfQuestionsFile = raf.length();
-                                        raf.seek(sizeOfQuestionsFile); //Escribe al final del ficehro.
-                                        ArrayList<Integer> indexesUsed = new ArrayList<>();
-                                        for (int i = 0; i < sizeOfQuestionsFile; i = i + OFFSET) {
-                                            indexesUsed.add(Input.readIntegerByRandomAccess(i, questionsFile));
-                                        }
-                                       
-                                        if(!indexesUsed.isEmpty()){
-                                            code = indexesUsed.get(indexesUsed.size() - 1);
-                                        }
-                                        do {
-                                            code++;
-                                        } while (indexesUsed.contains(code));
-
-                                        questionObj = new Question(code, question);
-
-                                        questionObj.writeQuestion(raf);
-
-                                        raf.close();
-
-                                    } catch (FileNotFoundException ex) {
-                                        Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
-                                    } catch (IOException ex) {
-                                        Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
-                                    }
+                                    EditMode.addQuestion();
                                 }
                                 Answer answerObj = null;
                                 switch(type){
                                     case 1:
-                                        String answer = String.format("%" + ANSWER_LENGTH + "s", Input.input("Escribe la respuesta.\n>>> "));
-                                        answerObj = new SimpleAnswer(questionObj.getCode(), questionObj.isDeleted(), answer);
-                                        try{
-                                            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
-                                            long sizeOfQuestionsFile = raf.length();                                          
-                                            raf.seek(sizeOfQuestionsFile);
-                                            answerObj.answerWriter(raf);
-                                            raf.close();
-                                        } catch (FileNotFoundException ex) {
-                                            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
+                                        EditMode.addSimpleAnswer();
                                         break;
                                     case 2:
-                                        do{
-                                            answer = Input.input("¿La respuesta es 'sí' o 'no' ('s' o 'n')?\n>>> ");
-                                            if(!(answer.equals("sí") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n"))){
-                                                System.out.println("Las respuestas permitidas son 'sí', 'no', 'si', 's' y 'n'. Prueba de  nuevo.");
-                                            }
-                                        } while(!(answer.equals("sí") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n")));
-                                       
-                                        if(answer.equals("sí") || answer.equals("si") || answer.equals("s")){
-                                            answer = "s";
-                                        } else{
-                                            answer = "n";
-                                        }
-                                        answerObj = new YesOrNoAnswer(code, false, answer);
-                                        try{
-                                            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
-                                            long sizeOfQuestionsFile = raf.length();
-                                            raf.seek(sizeOfQuestionsFile);
-                                            answerObj.answerWriter(raf);
-                                            raf.close();
-                                        } catch (FileNotFoundException ex) {
-                                            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
+                                        EditMode.addYesOrNoAnswer();
                                         break;
                                     case 3:
-                                        boolean noMistake = false;
-                                        String answer2;
-                                        String answer3;
-                                        String answer4;
-                                        String answer5;
-                                        do{
-                                            System.out.println("Primero debes introducir todas las posibles respuestas. "
-                                                    + "Después tendrás que especificar cuál es la correcta");
-                                            answer = Input.input("Introduce la primera respuesta\n>>> ");
-                                            answer2 = Input.input("Introduce la segunda respuesta\n>>> ");
-                                            answer3 = Input.input("Introduce la tercera respuesta\n>>> ");
-                                            answer4 = Input.input("Introduce la cuarta respuesta\n>>> ");
-                                            answer5 = Input.input("Introduce la quinta respuesta\n>>> ");
-                                            
-                                            String again = Input.input(String.format("Estas son las preguntas que has introducido:%n"
-                                                    + " 1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%nEscribe 's' si has cometido algún error y "
-                                                    + "quieres introducir de nuevo las respuestas.%n>>> ", answer, answer2, answer3, answer4, answer5));
-                                            if(again.equals("s")){
-                                                continue;
-                                            }
-                                            byte correctAnswer = Input.byteInput(String.format("¿Cuál de las respuestas que has introducido es la correcta?"
-                                                    + "    1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%n>>> ", answer, answer2, answer3, answer4, answer5));
-                                        } while(noMistake);
-                                        answerObj = new MultipleAnswer(code, false, answer, answer2, answer3, answer4, answer5);
-                                        try{
-                                            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
-                                            long sizeOfQuestionsFile = raf.length();
-                                            raf.seek(sizeOfQuestionsFile);
-                                            answerObj.answerWriter(raf);
-                                            raf.close();
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
+                                        EditMode.addMultipleAnswer();
                                         break;
                                     case 4:
                                         String simpleQuestionExample = "¿En qué año nació Francisco Ibáñez? [pregunta] 1936 [respuesta]";
@@ -204,14 +108,8 @@ public class Trivial extends Application {
                                 }
                             } while(type != 5);
                             break;
-                        case 2:
-                            try{
-                                RandomAccessFile raf = new RandomAccessFile(questionsFile, "r");
-                                
-                                raf.close();
-                            } catch (IOException ex) {
-                                Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                        case 2: //Listar todas las preguntas y respuestas.
+                            EditMode.listQuestionsAndAnswers();
                             break;
                         case 3:
                             break;
@@ -220,6 +118,7 @@ public class Trivial extends Application {
                         case 5:
                             break;
                         case 6:
+                            EditMode.removeAll();
                             break;
                         case 7:
                             System.exit(0);

@@ -18,6 +18,7 @@
 package trivial;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -36,9 +37,115 @@ public class EditMode {
     final static byte QUESTION_LENGTH = 120;
     //Cuidado al modificar QUESTION_OFFSET, podría desbordarse la variable byte.
     final static byte QUESTION_OFFSET = QUESTION_LENGTH + 1 + 4;
+    private static Question questionObj = new Question(1, "Ha ocurrido un error.");
+    private static Answer answerObj = null;
     
     public static void addQuestion(){
-        
+        int code = 0;
+        String question = String.format("%" + QUESTION_LENGTH + "s" , Input.input("Escribe la pregunta\n>>> "));
+        try{
+            RandomAccessFile raf = new RandomAccessFile(questionsFile, "rw");
+            long sizeOfQuestionsFile = raf.length();
+            raf.seek(sizeOfQuestionsFile); //Escribe al final del ficehro.
+            ArrayList<Integer> indexesUsed = new ArrayList<>();
+            for (int i = 0; i < sizeOfQuestionsFile; i = i + QUESTION_OFFSET) {
+                indexesUsed.add(Input.readIntegerByRandomAccess(i, questionsFile));
+            }
+
+            if(!indexesUsed.isEmpty()){
+                code = indexesUsed.get(indexesUsed.size() - 1);
+            }
+            do {
+                code++;
+            } while (indexesUsed.contains(code));
+
+            questionObj = new Question(code, question);
+
+            questionObj.writeQuestion(raf);
+
+            raf.close();
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public static void addMultipleAnswer(){
+        boolean noMistake = false;
+        String answer, answer2, answer3, answer4, answer5;
+        do{
+            System.out.println("Primero debes introducir todas las posibles respuestas. "
+                    + "Después tendrás que especificar cuál es la correcta");
+            answer = Input.input("Introduce la primera respuesta\n>>> ");
+            answer2 = Input.input("Introduce la segunda respuesta\n>>> ");
+            answer3 = Input.input("Introduce la tercera respuesta\n>>> ");
+            answer4 = Input.input("Introduce la cuarta respuesta\n>>> ");
+            answer5 = Input.input("Introduce la quinta respuesta\n>>> ");
+
+            String again = Input.input(String.format("Estas son las preguntas que has introducido:%n"
+                    + " 1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%nEscribe 's' si has cometido algún error y "
+                    + "quieres introducir de nuevo las respuestas.%n>>> ", answer, answer2, answer3, answer4, answer5));
+            if(again.equals("s")){
+                continue;
+            }
+            byte correctAnswer = Input.byteInput(String.format("¿Cuál de las respuestas que has introducido es la correcta?"
+                    + "    1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%n>>> ", answer, answer2, answer3, answer4, answer5));
+        } while(noMistake);
+        answerObj = new MultipleAnswer(questionObj.getCode(), false, answer, answer2, answer3, answer4, answer5);
+        try{
+            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
+            long sizeOfQuestionsFile = raf.length();
+            raf.seek(sizeOfQuestionsFile);
+            answerObj.answerWriter(raf);
+            raf.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                                        
+    }
+    public static void addSimpleAnswer(){
+        String answer = Input.input("Escribe la respuesta.\n>>> ");
+        //El questionObj se ha creado justo antes de iniciar este método; así pues, no hay que pasar el código como parámetro.
+        answerObj = new SimpleAnswer(questionObj.getCode(), false, answer);
+        try{
+            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
+            long sizeOfQuestionsFile = raf.length();                                          
+            raf.seek(sizeOfQuestionsFile);
+            answerObj.answerWriter(raf);
+            raf.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public static void addYesOrNoAnswer(){
+        String answer;
+        do{
+            answer = Input.input("¿La respuesta es 'sí' o 'no' ('s' o 'n')?\n>>> ");
+            if(!(answer.equals("sí") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n"))){
+                System.out.println("Las respuestas permitidas son 'sí', 'no', 'si', 's' y 'n'. Prueba de  nuevo.");
+            }
+        } while(!(answer.equals("sí") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n")));
+
+        if(answer.equals("sí") || answer.equals("si") || answer.equals("s")){
+            answer = "s";
+        } else{
+            answer = "n";
+        }
+        answerObj = new YesOrNoAnswer(questionObj.getCode(), false, answer);
+        try{
+            RandomAccessFile raf = new RandomAccessFile(answersFile, "rw");
+            long sizeOfQuestionsFile = raf.length();
+            raf.seek(sizeOfQuestionsFile);
+            answerObj.answerWriter(raf);
+            raf.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     public static void listQuestionsAndAnswers(){
         ArrayList<Question> simpleQuestion = new ArrayList<>();
@@ -80,10 +187,8 @@ public class EditMode {
                 }
             }
             questionsRAF.close();
-            for(int i = 0; i < questionsRAF.length(); i = i + QUESTION_OFFSET + 2){
-                
-            }
             answersRAF.close();
+            
             final int averageLengthOfASimpleAnswer = 3;
             
             //Muestra las preguntas simples
@@ -113,7 +218,9 @@ public class EditMode {
             Logger.getLogger(Trivial.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    /**
+     * Elimina todas las preguntas del fichero de preguntas y todas las respuestas del de respuestas.
+     */
     public static void removeAll() {
         try{
             BufferedWriter answers = new BufferedWriter(new FileWriter(answersFile));

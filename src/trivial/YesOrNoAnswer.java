@@ -26,54 +26,46 @@ import java.util.logging.Logger;
  *
  * @author Jorge Maldonado Ventura 
  */
-public class Question {
-    public final int code;
-    public final String question;
-    public boolean deleted;
+public class YesOrNoAnswer extends Answer{
+    String answerBoolean;
 
-    public Question(int code, String question) {
+    public YesOrNoAnswer() {
+        code = -1;
+        deleted = true;
+        answerBoolean = "";
+    }
+    @Override
+    public void check(int code) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    public YesOrNoAnswer(int code, boolean deleted, String answer){
         this.code = code;
-        this.question = question;
-        this.deleted = false; //No puedes crear una pregunta borrada.
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+        answerBoolean = answer;
     }
-    public void readQuestion(RandomAccessFile raf){
+    @Override
+    public void answerWriter(RandomAccessFile raf){
+        try{
+            raf.writeInt(code);
+            raf.writeBoolean(deleted);
+            raf.writeUTF(answer);
+        } catch (IOException ex) {
+            Logger.getLogger(YesOrNoAnswer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void answerReader(RandomAccessFile raf) {
         try{
             raf.readInt();
             raf.readBoolean();
             raf.readUTF();
         } catch (IOException ex) {
-            Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    public void writeQuestion(RandomAccessFile raf){
-        try{
-            raf.writeInt(code);
-            raf.writeBoolean(deleted);
-            raf.writeUTF(question);
-        } catch (IOException ex) {
-            Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(YesOrNoAnswer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     @Override
-    public String toString() {
-        return "Question{" + "code=" + code + ", question=" + question + ", deleted=" + deleted + '}';
+    public String toString(){
+        return String.format("Código de respuesta: %d. Borrada: %b. Respuesta: %s", code, deleted, answer);
     }
-
-    
 }
