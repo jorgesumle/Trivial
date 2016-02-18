@@ -3,7 +3,7 @@
  *
  * Este programa es software libre: usted puede redistruirlo y/o modificarlo
  * bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
- * la Free Software Foundation; ya sea la versión 2 de la Licencia, o
+ * la Free Software Foundation; ya sea la versión 3 de la Licencia, o
  * (a su elección) cualquier versión posterior.
  *
  * Este programa se distribuye con la intención de ser útil,
@@ -32,84 +32,48 @@ import java.util.logging.Logger;
  */
 public class EditMode {
     protected static String answersFile = "respuestas.dat";
-    protected static String codesFile = "cod.dat";
     protected static String questionsFile = "preguntas.dat";
     
-    private final static byte QUESTION_LENGTH = 120;
     protected final static short QUESTION_OBJECT_LENGTH = 128;
+    //Borra luego
     private final static short MULTIPLE_ANSWER_OBJECT_LENGTH = 160;
     private final static byte SIMPLE_ANSWER_OBJECT_LENGTH = 39;
     private final static byte YES_OR_NO_ANSWER_OBJECT_LENGTH = 10;
+    //\\
     private static Question questionObj;
     private static Answer answerObj;
     public static void addQuestion(){
-        String question;
-        do{
-            question = String.format("%" + QUESTION_LENGTH + "s" , Input.input("Escribe la pregunta\n>>> "));
-            if(question.length() > QUESTION_LENGTH)
-                System.out.println("No se ha admitido la pregunta. Las preguntas no pueden tener más de " + QUESTION_LENGTH + " caracteres.");
-            if(StringFormat.removeSpacesAtTheBeggining(question).length() < 1){
-                System.out.println("No se ha admitido la pregunta. Las preguntas no pueden tener menos de " + 1 + " carácter.");
-            }
-        } while(question.length() > QUESTION_LENGTH || StringFormat.removeSpacesAtTheBeggining(question).length() < 1);
+        String question = Input.questionInput();
         int code = 0;
-        RandomAccessFile codeRAF = null;
-        RandomAccessFile questionRAF = null;
+        
         ArrayList<Integer> codesUsed = new ArrayList<>();
-        questionObj = new Question();
-        try{
-            //Crea y escribe el código.
-            codeRAF = new RandomAccessFile(codesFile, "rw");
-            for(int i = 0; i < codeRAF.length() / 4; i++){
-                codesUsed.add(codeRAF.readInt());
-            }
-            
-            if(!(codesUsed.size() == 0))
-                code = (codesUsed.get(codesUsed.size() - 1)) + 1;
-            
-            while(codesUsed.contains(code)){
-                code++;
-            }
-            codeRAF.seek(codeRAF.length());
-            codeRAF.writeInt(code);
-            //\\
+        ArrayList<Question> questions = EditMode.getQuestions();
+        
+         //Crea y escribe el código.
+        for(int i = 0; i < questions.size(); i++){
+            codesUsed.add(questions.get(i).getCode());
+        }
+        while(codesUsed.contains(code)){
+            code = (int)(Math.random() * (Integer.MAX_VALUE)); //Número aleatorio entre 0 y 2147483647.
+        }
+        try(RandomAccessFile questionRAF = new RandomAccessFile(questionsFile, "rw")){
             //Crea y escribe las preguntas
-            questionRAF = new RandomAccessFile(questionsFile, "rw");
             long sizeOfQuestionsFile = questionRAF.length();
             questionRAF.seek(sizeOfQuestionsFile);
-            questionObj = new Question(code, question, selectCategory());
+            questionObj = new Question(code, question, Input.selectCategory());
             questionObj.writeQuestion(questionRAF);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            System.out.println("No existe ninguna pregunta"); //revísalo.
             Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
-        } finally{
-            try {
-                codeRAF.close();
-                questionRAF.close();
-            } catch (IOException ex) {
-                System.out.println("No existe ninguna pregunta.");
-                Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 
-    private static byte selectCategory() {
-        byte option = 0;
-        final String categories = "    1) Geografía.\n"
-                + "    2) Espectáculos.\n"
-                + "    3) Historia.\n"
-                + "    4) Arte y Literatura.\n"
-                + "    5) Ciencias y Naturaleza.\n"
-                + "    6) Deportes.\n";
-        do{
-            option = Input.byteInput("Elige una de las siguientes categorías: \n" + categories + ">>> ");
-        } while(option < 1 || option > 6);
-        return option;
-    }
+    
     
     public static ArrayList<Answer> getAnswers(){
-        Answer answer;
+        Answer answer = null;
         ArrayList<Answer> answers = new ArrayList<>();
         try(RandomAccessFile raf = new RandomAccessFile(answersFile, "r")){           
             int i = 0;
@@ -119,26 +83,22 @@ public class EditMode {
                     if(i >= raf.length())
                         break;
                 }
-                answer = new SimpleAnswer();
-                if(answer.answerReader(raf)){
-                    i += SIMPLE_ANSWER_OBJECT_LENGTH;
-                    if(!answer.deleted)
-                        answers.add(answer);
-                } else{
-                    answer = new YesOrNoAnswer();
-                    if(answer.answerReader(raf)){                      
-                        i += YES_OR_NO_ANSWER_OBJECT_LENGTH;
-                        if(!answer.deleted)
-                            answers.add(answer);
-                    } else{
+                byte type = Answer.readType(raf);
+                
+                switch(type){
+                    case 1:
+                        answer = new SimpleAnswer();
+                        break;
+                    case 2:
+                        answer = new YesOrNoAnswer();
+                        break;
+                    case 3:
                         answer = new MultipleAnswer();
-                        if(answer.answerReader(raf)){
-                            i += MULTIPLE_ANSWER_OBJECT_LENGTH;
-                            if(!answer.deleted)
-                                answers.add(answer);
-                        }
-                    }
+                        break;
                 }
+                answer.answerReader(raf);
+                if(!answer.deleted)
+                    answers.add(answer);
             }
         } catch (FileNotFoundException ex) {
             System.out.println("No existe ninguna respuesta");
@@ -266,10 +226,6 @@ public class EditMode {
             BufferedWriter questions = new BufferedWriter(new FileWriter(questionsFile));
             questions.write("");
             questions.close();
-            
-            BufferedWriter codes = new BufferedWriter(new FileWriter(codesFile));
-            codes.write("");
-            codes.close();
             
         } catch (IOException ex) {
             Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
