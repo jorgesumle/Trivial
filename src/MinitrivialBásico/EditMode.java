@@ -325,6 +325,7 @@ public class EditMode {
         modifyQuestion(code);
         modifyAnswer(code);
     }
+    
     public static void modifyQuestion(int code){
         Query.printAnswerAndQuestionByCode(code);
         String modify= "";
@@ -370,9 +371,13 @@ public class EditMode {
                 break;
             case 3:
                 EditMode.addMultipleAnswer();
+                break;
         }
     }
-
+    /**
+     * Le hace una pregunta al usuario y le dice si ha acertado o no. Si no
+     * ha acertado, además, le informa de cuál era la respuesta correcta.
+     */
     public static void testGame() {
         ArrayList<Question> questions = EditMode.getQuestions();
         ArrayList<Answer> answers = EditMode.getAnswers();
@@ -397,12 +402,12 @@ public class EditMode {
             case 2:
                 {
                     String answer = answers.get(randomQuestion).getAnswer();
-                    byte answerInput;
+                    String answerInput;
                     String answerStr;
                     do{
-                        answerInput = Input.byteInput("    1) Sí\n    2) No\n");
-                    } while(answerInput != 1 && answerInput != 2);
-                    if(answerInput == 1){
+                        answerInput = Input.input("    1) Sí\n    2) No\n").toLowerCase(); //A minúscula para compararlo más fácilmente.
+                    } while(!(answerInput.equals("1") || answerInput.equals("2") || answerInput.equals("si") || answerInput.equals("no") || answerInput.equals("sí")));
+                    if(answerInput.equals("1") || answerInput.equals("si") || answerInput.equals("sí")){
                         answerStr = "s";
                     } else{
                         answerStr = "n";
@@ -420,11 +425,14 @@ public class EditMode {
                         //Lista las preguntas, pide un número por teclado y lo asigna a answerInput.
                         answerInput = Input.byteInput(String.format("    1) %s%n    2) %s%n    3) %s%n    4) %s%n    5) %s%n", answerObj.answer, answerObj.answer2, answerObj.answer3, answerObj.answer4, answerObj.answer5));
                     } while(answerInput < 1 || answerInput > 5);
+                    
+                    String answerStr = StringFormat.removeSpacesAtTheBeggining(MultipleAnswer.getAnswerByCorrectAnswer(answerObj.getCorrectAnswer(), answerObj));
+                    
                     if(answerInput == answerObj.getCorrectAnswer()){
                         System.out.println("Acertaste.");
                     }
                     else{
-                        System.out.println("Fallaste");
+                        System.out.println("Fallaste. La respuesta correcta es " + answerStr + ".");
                     }
                 }
                 break;
@@ -432,4 +440,18 @@ public class EditMode {
                 break;
         }
     }
+    
+    /*Puede ser útil en el futuro.
+    public static Question getQuestionByCode(int code){
+        ArrayList<Question> questions = getQuestions();
+        int questionPos = -1;
+        for(int i = 0; i < questions.size(); i++){
+            if(questions.get(i).getCode() == code){
+                questionPos = i;
+                break;
+            }
+        }
+        return questions.get(questionPos);
+    }
+    */
 }
