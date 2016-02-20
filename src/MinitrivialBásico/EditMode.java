@@ -330,9 +330,9 @@ public class EditMode {
         Query.printAnswerAndQuestionByCode(code);
         String modify= "";
         do{
-            modify = Input.input("Estás seguro de que quieres modificar esta pregunta. Si"
-                + "dices que si se borrará y deberás introducir todos los datos"
-                + "de la pregunta de nuevo.");
+            modify = Input.input("Estás seguro de que quieres modificar esta pregunta. Si "
+                + "dices que si, se borrará y deberás introducir todos los datos"
+                + "de la pregunta de nuevo.\n>>> ");
         } while(modify.charAt(0) != 'n' && modify.charAt(0) != 's');
         if(modify.charAt(0) == 'n')
             return;

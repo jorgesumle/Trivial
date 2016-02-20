@@ -16,13 +16,16 @@
  */
 
 package MinitrivialBásico;
+import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Jorge Maldonado Ventura 
  */
-abstract class Answer{
+public abstract class Answer{
     public int code;
     public byte category;
     public boolean deleted;
@@ -61,5 +64,23 @@ abstract class Answer{
     public void setAnswer(String answer) {
         this.answer = answer;
     }
-    
+
+    /**
+     * Le el tipo de respuesta de un fichero e informa de su tipo.
+     * @param raf contiene información sobre el fichero del que se va a leer
+     * @return 1, si se trata de un objeto SimpleAnswer; 2, si es un objeto YesOrNoAnswer;
+     * y 3, para MultipleAnswer.
+     */
+    public static byte readType(RandomAccessFile raf){
+        byte type = 0;
+        try{
+            long initialPos = raf.getFilePointer();
+            raf.seek(initialPos + 4);
+            type = raf.readByte();
+            raf.seek(initialPos);
+        } catch (IOException ex) {
+            Logger.getLogger(Answer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return type;
+    }
 }

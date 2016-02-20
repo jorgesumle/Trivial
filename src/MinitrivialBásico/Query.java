@@ -92,23 +92,20 @@ public class Query {
         int lengthOfLongestAnswer = ANSWERS_HEADER.length();
         
         for(int i = 0; i < questions.size(); i++){
-            try{ //El casting puede hacer que pete el programa.
-                if(((SimpleAnswer)(answers.get(i))).TYPE_OF_ANSWER == 1){
-                    answers.get(i).setAnswer(StringFormat.removeSpacesAtTheBeggining(answers.get(i).answer));
-                    simpleAnswers.add((SimpleAnswer)answers.get(i));
-                    if(answers.get(i).answer.length() > lengthOfLongestAnswer)
-                        lengthOfLongestAnswer = answers.get(i).answer.length();
+            if(answers.get(i).TYPE_OF_ANSWER == 1){
+                answers.get(i).setAnswer(StringFormat.removeSpacesAtTheBeggining(answers.get(i).answer));
+                simpleAnswers.add((SimpleAnswer)answers.get(i));
+                if(answers.get(i).answer.length() > lengthOfLongestAnswer)
+                    lengthOfLongestAnswer = answers.get(i).answer.length();
 
-                    //Añade las preguntas simples y su categoría.
-                    questions.get(i).setQuestion(StringFormat.removeSpacesAtTheBeggining(questions.get(i).question));
-                    category.add(StringFormat.formatCategory(questions.get(i).getCategory()));
-                    simpleQuestions.add(questions.get(i));
+                //Añade las preguntas simples y su categoría.
+                questions.get(i).setQuestion(StringFormat.removeSpacesAtTheBeggining(questions.get(i).question));
+                category.add(StringFormat.formatCategory(questions.get(i).getCategory()));
+                simpleQuestions.add(questions.get(i));
 
-                    if(questions.get(i).question.length() > lengthOfLongestQuestion)
-                        lengthOfLongestQuestion = questions.get(i).question.length();
-                }
-            }
-            catch(Exception e){}
+                if(questions.get(i).question.length() > lengthOfLongestQuestion)
+                    lengthOfLongestQuestion = questions.get(i).question.length();
+            }          
         }
         
         System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + lengthOfLongestAnswer + 11));
@@ -119,17 +116,64 @@ public class Query {
         }
         System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + lengthOfLongestAnswer + 11));
     }
+    public static void showYesOrNoQuestions(){
+        ArrayList<Question> questions = EditMode.getQuestions();
+        ArrayList<String> category = new ArrayList<>();
+        ArrayList<Answer> answers = EditMode.getAnswers();
+        
+        ArrayList<YesOrNoAnswer> yesOrNoAnswers = new ArrayList<>();
+        ArrayList<Question> simpleQuestions = new ArrayList<>();
+        
+        int lengthOfLongestQuestion = QUESTIONS_HEADER.length();
+        int lengthOfLongestAnswer = ANSWERS_HEADER.length();
+        
+        for(int i = 0; i < questions.size(); i++){
+            if(answers.get(i).TYPE_OF_ANSWER == 2){
+                answers.get(i).setAnswer(StringFormat.removeSpacesAtTheBeggining(answers.get(i).answer));
+                yesOrNoAnswers.add((YesOrNoAnswer)answers.get(i));
+                if(answers.get(i).answer.length() > lengthOfLongestAnswer)
+                    lengthOfLongestAnswer = answers.get(i).answer.length();
 
+                //Añade las preguntas simples y su categoría.
+                questions.get(i).setQuestion(StringFormat.removeSpacesAtTheBeggining(questions.get(i).question));
+                category.add(StringFormat.formatCategory(questions.get(i).getCategory()));
+                simpleQuestions.add(questions.get(i));
+
+                if(questions.get(i).question.length() > lengthOfLongestQuestion)
+                    lengthOfLongestQuestion = questions.get(i).question.length();
+            }          
+        }
+        
+        System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + lengthOfLongestAnswer + 11));
+        System.out.printf("| %" + LENGTH_OF_CODE_FIELD + "s | %-21s | %-" + lengthOfLongestQuestion + "s | %" + lengthOfLongestAnswer + "s |%n", CODE_HEADER, CATEGORY_HEADER, QUESTIONS_HEADER, ANSWERS_HEADER); 
+        System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + lengthOfLongestAnswer + 11));
+        for(int i = 0; i < simpleQuestions.size(); i++){
+            System.out.printf("| %" + LENGTH_OF_CODE_FIELD + "s | %-21s | %-" + lengthOfLongestQuestion + "s | %" + lengthOfLongestAnswer + "s |%n", questions.get(i).getCode(), category.get(i), questions.get(i).getQuestion(), yesOrNoAnswers.get(i).getAnswer()); 
+        }
+        System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + lengthOfLongestAnswer + 11));
+    }
+    /**
+     * Muestra la pregunta y la respuesta que se le indica. Si no existe el código de respuesta
+     * o de pregunta especificado se muestra un mensaje que avisa al usuario de que
+     * no existe tal pregunta ni tal respuesta.
+     * @param code el código de la respuesta que se quiere mostrar por pantalla.
+     */
     public static void printAnswerAndQuestionByCode(int code) {
         printQuestionByCode(code);
         printAnswerByCode(code);
     }
+    /**
+     * Muestra la respuesta que se le indica. Si no existe el código de respuesta
+     * especificado, se muestra el siguiente mensaje: "No existe ese código de respuesta".
+     * @param code el código de la respuesta que se quiere mostrar por pantalla.
+     */
     public static void printAnswerByCode(int code){
         ArrayList<Answer> answers = EditMode.getAnswers();
         int answerPos = -1;
         for(int i = 0; i < answers.size(); i++){
             if(answers.get(i).getCode() == code){
                 answerPos = i;
+                break;
             }
         }
         if(answerPos == -1){
@@ -139,12 +183,18 @@ public class Query {
             System.out.println(answers.get(answerPos).toString());
         }
     }
+    /**
+     * Muestra la pregunta que se le indica. Si no existe el código de pregunta
+     * especificado, se muestra el siguiente mensaje: "No existe ese código de pregunta".
+     * @param code el código de la pregunta que se quiere mostrar por pantalla.
+     */
     public static void printQuestionByCode(int code){
         ArrayList<Question> questions = EditMode.getQuestions();
         int questionPos = -1;
         for(int i = 0; i < questions.size(); i++){
             if(questions.get(i).getCode() == code){
                 questionPos = i;
+                break;
             }
         }
         if(questionPos == -1){

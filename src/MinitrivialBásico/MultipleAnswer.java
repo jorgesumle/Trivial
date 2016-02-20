@@ -64,10 +64,7 @@ public class MultipleAnswer extends Answer{
     public boolean answerReader(RandomAccessFile raf) {
         try{
             code = raf.readInt();
-            if(raf.readByte() != TYPE_OF_ANSWER){
-                raf.seek(raf.getFilePointer() - 5); //Vuelve a la posición anterior a la ejecución del método.
-                return false;
-            }
+            raf.readByte();
             deleted = raf.readBoolean();
             category = raf.readByte();
             answer = raf.readUTF();
@@ -120,5 +117,42 @@ public class MultipleAnswer extends Answer{
                 + "Respuesta 4: " + answer4 + ".\n"
                 + "Respuesta 5: " + answer5 + ".\n"
                 + "Respuesta correcta: Respuesta " + correctAnswer + ".\n";  
+    }
+
+    public String getAnswer2() {
+        return answer2;
+    }
+
+    public String getAnswer3() {
+        return answer3;
+    }
+
+    public String getAnswer4() {
+        return answer4;
+    }
+
+    public String getAnswer5() {
+        return answer5;
+    }
+    public static String getAnswerByCorrectAnswer(byte correctAnswer, MultipleAnswer answerObj){
+        String answerStr = "";
+        switch(correctAnswer){
+            case 1: 
+                answerStr = answerObj.getAnswer();
+                break;
+            case 2:
+                answerStr = answerObj.getAnswer2();
+                break;
+            case 3:
+                answerStr = answerObj.getAnswer3();
+                break;
+            case 4:
+                answerStr = answerObj.getAnswer4();
+                break;
+            case 5:
+                answerStr = answerObj.getAnswer5();
+                break;
+        }
+        return answerStr;
     }
 }

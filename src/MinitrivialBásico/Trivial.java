@@ -19,26 +19,72 @@ package MinitrivialBásico;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * Este programa crea las preguntas y respuestas del Trivial. Las preguntas tienen
+ * Trivial (videojuego). Las preguntas tienen
  * una longitud máxima de 120 carácteres; las respuestas tienen una longitud máxima
  * de 30. El programa utiliza dos ficheros de datos: preguntas.dat y respuestas.dat.
  * @author Jorge Maldonado Ventura 
  */
-public class CreaPreguntasYRespuestas extends Application{
-    GridPane grid;
+public class Trivial extends Application{
+    public static GridPane grid;
+    public static String player1Name;
+    public static String player2Name;
+    
     public void start(Stage stage){                
-        grid = new GridPane();
-        grid = GameWindow.game(grid);
-        grid.setVisible(true);
+        GridPane mainScreen = new GridPane();
+        mainScreen.setVgap(25);
+        mainScreen.setHgap(25);
+
+        Scene enterNames = new Scene(mainScreen, 300, 300);
+        enterNames.getStylesheets().add(UI.GameWindow.class.getResource("NamesScreen.css").toExternalForm());
+        Text title = new Text("TRIVIAL");
+        title.setId("title");
         
-        Scene scene = new Scene(grid, 300, 300);
+        Label playerLabel1 = new Label("Jugador 1");
+        TextField player1 = new TextField();
+        Label playerLabel2 = new Label("Jugador 2");
+        TextField player2 = new TextField();
+        Button play = new Button("Jugar");
+        play.setId("playButton");
+        Button exit = new Button("Salir");
+        exit.setOnAction(e -> System.exit(0));
+        
+        mainScreen.add(title, 1, 1, 2, 1);
+        
+        mainScreen.add(playerLabel1, 1, 2);
+        mainScreen.add(player1, 2, 2);
+        mainScreen.add(playerLabel2, 1, 3);
+        mainScreen.add(player2, 2, 3);
+        
+        mainScreen.add(play, 2, 4);
+        mainScreen.add(exit, 2, 5);
+        
+        
+        play.setOnAction(e -> 
+            {
+                player1Name = player1.getText(); 
+                player2Name = player2.getText();
+                
+                grid = new GridPane();
+                UI.GameWindow.game();
+                Scene game = new Scene(grid, 700, 500);
+                stage.setScene(game);
+                
+            }
+        );
+        
         
         stage.setTitle("Trivial");
-        stage.setScene(scene);
+        stage.setScene(enterNames);
         stage.show();
     }
     /**
@@ -51,7 +97,7 @@ public class CreaPreguntasYRespuestas extends Application{
                         + "    2. Consultar datos.\n"
                         + "    3. Buscar una pregunta y/o su respuesta.\n"
                         + "    4. Modificar una pregunta y/o su respuesta.\n" //Falta el o
-                        + "    5. Borrar una pregunta y su respuesta.\n"
+                        + "    5. Borrado de preguntas y respuestas.\n"
                         + "    6. Borrar todas las preguntas\n"
                         + "    7. Responde a una pregunta elegida al azar.\n"
                         + "    8. Salir del programa.\n";
@@ -114,7 +160,7 @@ public class CreaPreguntasYRespuestas extends Application{
                                     case 1: Query.showQuestions(); break;
                                     case 2: Query.showAnswers(); break;
                                     case 3: Query.showSimpleQuestionsAndAnswers(); break;
-                                    case 4: break;
+                                    case 4: Query.showYesOrNoQuestions(); break;
                                     case 5: break;
                                     case 6: break;
                                     case 7: break;
@@ -160,12 +206,25 @@ public class CreaPreguntasYRespuestas extends Application{
                                     EditMode.modifyQuestion(Input.intInput("Introduce el código de la pregunta que quieres modificar\n>>> "));
                                     break;
                                 case 3:
-                                    EditMode.modifyQuestion(Input.intInput("Introduce el código de la respuesta que quieres modificar\n>>> "));
+                                    EditMode.modifyAnswer(Input.intInput("Introduce el código de la respuesta que quieres modificar\n>>> "));
                                     break;                                    
                             }
                             break;
                         case 5:
-                            EditMode.removeQuestionAndAnswer(Input.intInput("Introduce el código de la pregunta y la respuesta que quieres borrar\n>>> "));
+                            byte deleteOption = 0;
+                            do{
+                                deleteOption = Input.byteInput("Elige una opción:\n"
+                                        + "    1) Borrar una pregunta.\n"
+                                        + "    2) Borrar todas las preguntas.\n>>> ");
+                            } while(deleteOption < 1 || deleteOption > 2);
+                            switch(deleteOption){
+                                case 1: 
+                                    EditMode.removeQuestionAndAnswer(Input.intInput("Introduce el código de la pregunta y la respuesta que quieres borrar\n>>> "));
+                                    break;
+                                case 2:
+                                    EditMode.removeAll();
+                                    break;  
+                            }
                             break;
                         case 6:
                             EditMode.removeAll();

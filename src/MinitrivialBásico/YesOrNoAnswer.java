@@ -60,10 +60,7 @@ public class YesOrNoAnswer extends Answer{
     public boolean answerReader(RandomAccessFile raf) {
         try{
             code = raf.readInt();
-            if(raf.readByte() != TYPE_OF_ANSWER){
-                raf.seek(raf.getFilePointer() - 5); //Vuelve a la posición anterior a la ejecución del método.
-                return false;
-            }
+            raf.readByte();
             deleted = raf.readBoolean();
             category = raf.readByte();
             answer = raf.readUTF();

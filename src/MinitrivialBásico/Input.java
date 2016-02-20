@@ -82,4 +82,29 @@ public class Input {
         }
         return value;
     }
+    public static String questionInput(){
+        String question;
+        do{
+            question = String.format("%" + Question.QUESTION_LENGTH + "s" , Input.input("Escribe la pregunta\n>>> "));
+            if(question.length() > Question.QUESTION_LENGTH)
+                System.out.println("No se ha admitido la pregunta. Las preguntas no pueden tener más de " + Question.QUESTION_LENGTH + " caracteres.");
+            if(StringFormat.removeSpacesAtTheBeggining(question).length() < 1){
+                System.out.println("No se ha admitido la pregunta. Las preguntas no pueden tener menos de " + 1 + " carácter.");
+            }
+        } while(question.length() > Question.QUESTION_LENGTH || StringFormat.removeSpacesAtTheBeggining(question).length() < 1);
+        return question;
+    }
+    public static byte selectCategory() {
+        byte option = 0;
+        final String categories = "    1) Geografía.\n"
+                + "    2) Espectáculos.\n"
+                + "    3) Historia.\n"
+                + "    4) Arte y Literatura.\n"
+                + "    5) Ciencias y Naturaleza.\n"
+                + "    6) Deportes.\n";
+        do{
+            option = Input.byteInput("Elige una de las siguientes categorías: \n" + categories + ">>> ");
+        } while(option < 1 || option > 6);
+        return option;
+    }
 }

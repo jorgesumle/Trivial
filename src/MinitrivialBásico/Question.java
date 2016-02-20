@@ -32,7 +32,7 @@ public class Question {
     public boolean deleted;
     public String question;
     
-
+    public final static byte QUESTION_LENGTH = 120;
     public Question() {
         code = 0;
         question = "";
