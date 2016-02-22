@@ -22,9 +22,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -45,7 +44,9 @@ public class Trivial extends Application{
         mainScreen.setHgap(25);
 
         Scene enterNames = new Scene(mainScreen, 300, 300);
-        enterNames.getStylesheets().add(UI.GameWindow.class.getResource("NamesScreen.css").toExternalForm());
+        
+        enterNames.getStylesheets().add(UI.GameWindow.class.getResource("namesSc.css").toExternalForm());
+
         Text title = new Text("TRIVIAL");
         title.setId("title");
         
@@ -78,12 +79,12 @@ public class Trivial extends Application{
                 UI.GameWindow.game();
                 Scene game = new Scene(grid, 700, 500);
                 stage.setScene(game);
-                
             }
         );
         
         
         stage.setTitle("Trivial");
+        stage.getIcons().add(new Image(UI.GameWindow.class.getResource("icon.png").toExternalForm()));
         stage.setScene(enterNames);
         stage.show();
     }
