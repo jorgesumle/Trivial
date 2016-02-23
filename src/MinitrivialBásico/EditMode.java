@@ -18,6 +18,7 @@
 package MinitrivialBásico;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -112,6 +113,10 @@ public class EditMode {
     public static ArrayList<Question> getQuestions() {
         Question question = new Question();
         ArrayList<Question> questions = new ArrayList<>();
+        File file = new File(questionsFile);
+        if(!file.exists()){ //Para que no de un error al intentar leer un archivo que no existe.
+            return new ArrayList<Question>();
+        }
         try(RandomAccessFile raf = new RandomAccessFile(questionsFile, "r")){
             for(int i = 2; i < raf.length(); i = i + QUESTION_OBJECT_LENGTH){
                 if(!(i == raf.getFilePointer() + 2)){
@@ -213,24 +218,46 @@ public class EditMode {
     }
     /**
      * Elimina todas las preguntas y las respuestas de forma definitiva. El método
-     * sobreescribe los archivos de códigos, preguntas y respuestas con una cadena de 
+     * sobreescribe los archivos de preguntas y respuestas con una cadena de 
      * texto vacía, es decir, sustituye los bytes que había en el fichero por 0 bytes.
      */
     public static void removeAll() {
-        //Mejoralo un poco.
-        try{
-            BufferedWriter answers = new BufferedWriter(new FileWriter(answersFile));
+        //Confirmación
+        String confirmation;
+        do{
+            confirmation = Input.input("¿Estás seguro de que quieres eliminar todas las preguntas y respuestas? ('s' o 'n')\n>>> ").toLowerCase();
+        } while(confirmation.charAt(0) != 's' && confirmation.charAt(0) != 'n');
+        if(confirmation.charAt(0) == 'n'){
+            return;
+        }
+        //\\
+        removeQuestionsPermanently();
+        removeAnswersPermanently();
+        System.out.println("Se han borrado con éxito todas las preguntas y respuestas.");
+    }
+    /**
+     * Elimina todas las respuestas de forma definitiva. Sobreescribe el archivo de respuestas
+     * con una cadena de texto vacía, es decir, sustituye los bytes que había en el
+     * fichero por 0 bytes.
+     */
+    private static void removeAnswersPermanently(){
+        try(BufferedWriter answers = new BufferedWriter(new FileWriter(answersFile))){
             answers.write("");
-            answers.close();
-            
-            BufferedWriter questions = new BufferedWriter(new FileWriter(questionsFile));
-            questions.write("");
-            questions.close();
-            
         } catch (IOException ex) {
             Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Se han borrado con éxito todas las preguntas y respuestas.");
+    }
+    /**
+     * Elimina todas las preguntas de forma definitiva. Sobreescribe el archivo de preguntas
+     * con una cadena de texto vacía, es decir, sustituye los bytes que había en el
+     * fichero por 0 bytes.
+     */
+    private static void removeQuestionsPermanently(){
+        try(BufferedWriter questions = new BufferedWriter(new FileWriter(questionsFile))){
+            questions.write("");
+        } catch (IOException ex) {
+            Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void removeQuestionAndAnswer(int code) {
@@ -441,17 +468,38 @@ public class EditMode {
         }
     }
     
-    /*Puede ser útil en el futuro.
-    public static Question getQuestionByCode(int code){
-        ArrayList<Question> questions = getQuestions();
-        int questionPos = -1;
-        for(int i = 0; i < questions.size(); i++){
-            if(questions.get(i).getCode() == code){
-                questionPos = i;
-                break;
-            }
-        }
-        return questions.get(questionPos);
+    public static void removeDeletedQuestionsAndAnswers() {
+        
+        removeDeletedQuestion();
+        removeDeletedAnswer();
+        System.out.println("Se han borrado definitivamente las preguntas borradas con éxito.");
     }
-    */
+
+    private static void removeDeletedQuestion() {
+        ArrayList<Question> questions = EditMode.getQuestions();
+        EditMode.removeQuestionsPermanently();
+        try(RandomAccessFile raf = new RandomAccessFile(questionsFile, "rw")){
+            for(int i = 0; i < questions.size(); i++){
+                questions.get(i).writeQuestion(raf);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void removeDeletedAnswer() {
+        ArrayList<Answer> answers = EditMode.getAnswers();
+        EditMode.removeAnswersPermanently();
+        try(RandomAccessFile raf = new RandomAccessFile(questionsFile, "rw")){
+            for(int i = 0; i < answers.size(); i++){
+                answers.get(i).answerWriter(raf);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(EditMode.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
