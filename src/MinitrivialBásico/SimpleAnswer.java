@@ -27,6 +27,18 @@ import java.util.logging.Logger;
  * @author Jorge Maldonado Ventura 
  */
 public class SimpleAnswer extends Answer{
+
+    public static void addSimpleAnswer() {
+        String answer = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la respuesta.\n>>> "));
+        answerObj = new SimpleAnswer(Question.questionObj.getCode(), false, Question.questionObj.getCategory(), answer);
+        try (final RandomAccessFile raf = new RandomAccessFile(Answer.answersFile, "rw")) {
+            long sizeOfAnswersFile = raf.length();
+            raf.seek(sizeOfAnswersFile);
+            answerObj.answerWriter(raf);
+        } catch (IOException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
 
     public SimpleAnswer() {

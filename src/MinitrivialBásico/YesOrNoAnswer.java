@@ -27,6 +27,29 @@ import java.util.logging.Logger;
  * @author Jorge Maldonado Ventura 
  */
 public class YesOrNoAnswer extends Answer{
+
+    public static void addYesOrNoAnswer() {
+        String answer;
+        do {
+            answer = Input.input("\u00bfLa respuesta es 's\u00ed' o 'no' ('s' o 'n')?\n>>> ");
+            if (!(answer.equals("s\u00ed") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n"))) {
+                System.out.println("Las respuestas permitidas son 's\u00ed', 'no', 'si', 's' y 'n'. Prueba de  nuevo.");
+            }
+        } while (!(answer.equals("s\u00ed") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n")));
+        if (answer.equals("s\u00ed") || answer.equals("si") || answer.equals("s")) {
+            answer = "s";
+        } else {
+            answer = "n";
+        }
+        answerObj = new YesOrNoAnswer(Question.questionObj.getCode(), false, Question.questionObj.getCategory(), answer);
+        try (final RandomAccessFile raf = new RandomAccessFile(Answer.answersFile, "rw")) {
+            long sizeOfAnswersFile = raf.length();
+            raf.seek(sizeOfAnswersFile);
+            answerObj.answerWriter(raf);
+        } catch (IOException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     /**
      * Crea una una respuesta vacía: 

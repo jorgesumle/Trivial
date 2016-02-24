@@ -16,8 +16,13 @@
  */
 
 package MinitrivialBásico;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +39,150 @@ public abstract class Answer{
     
     protected final static byte ANSWER_LENGTH = 30;
     
+    protected static Answer answerObj;
+    protected final static String answersFile = "respuestas.dat";
+
+    public static void modifyAnswer(int code) {
+        Query.printAnswerAndQuestionByCode(code);
+        String modify = "";
+        do {
+            modify = Input.input("Est\u00e1s seguro de que quieres modificar esta respuesta. Si" + "dices que si se borrar\u00e1 y deber\u00e1s introducir todos los datos" + "de la respuesta de nuevo.");
+        } while (modify.charAt(0) != 'n' && modify.charAt(0) != 's');
+        if (modify.charAt(0) == 'n') {
+            return;
+        }
+        removeAnswer(code);
+        byte type = Input.byteInput("Cuando modificas una respuesta, puedes cambiar tambi\u00e9n su tipo.\n" + "Elige un tipo de respuesta:\n" + "    1) Simple.\n" + "    2) Del tipo si/no.\n" + "    3) De respuesta m\u00faltiple.\n" + ">>> ");
+        switch (type) {
+            case 1:
+                SimpleAnswer.addSimpleAnswer();
+                break;
+            case 2:
+                YesOrNoAnswer.addYesOrNoAnswer();
+                break;
+            case 3:
+                MultipleAnswer.addMultipleAnswer();
+                break;
+        }
+    }
+
+    /**
+     * Elimina todas las respuestas de forma definitiva. Sobreescribe el archivo de respuestas
+     * con una cadena de texto vacía, es decir, sustituye los bytes que había en el
+     * fichero por 0 bytes.
+     */
+    protected static void removeAnswersPermanently() {
+        try (final BufferedWriter answers = new BufferedWriter(new FileWriter(answersFile))) {
+            answers.write("");
+        } catch (IOException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    protected static void removeDeletedAnswers() {
+        ArrayList<Answer> answers = Answer.getAnswers();
+        Answer.removeAnswersPermanently();
+        try (final RandomAccessFile raf = new RandomAccessFile(Question.questionsFile, "rw")) {
+            for (int i = 0; i < answers.size(); i++) {
+                answers.get(i).answerWriter(raf);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    protected static void removeAnswer(int code) {
+        try (final RandomAccessFile raf = new RandomAccessFile(answersFile, "rw")) {
+            int i = 0;
+            int readCode = -20; //No se asignan códigos negativos.
+            byte answerType = 0;
+            boolean deleted = false;
+            long positionToDelete = -1; //La posición donde tiene que cambiar el boolean.
+            while (i < raf.length()) {
+                if (!(i == raf.getFilePointer())) {
+                    i += raf.getFilePointer() - i;
+                    if (i >= raf.length()) {
+                        break;
+                    }
+                }
+                readCode = raf.readInt();
+                answerType = raf.readByte();
+                positionToDelete = raf.getFilePointer();
+                deleted = raf.readBoolean();
+                raf.readByte();
+                raf.readUTF();
+                if (answerType == 3) {
+                    raf.readUTF();
+                    raf.readUTF();
+                    raf.readUTF();
+                    raf.readUTF();
+                    raf.readByte();
+                }
+                if (readCode == code) {
+                    if (deleted) {
+                        System.out.println("Esta respuesta ya ha sido borrada.");
+                        return;
+                    }
+                    raf.seek(positionToDelete);
+                    raf.writeBoolean(true);
+                    System.out.println("Respuesta " + code + " borrada con \u00e9xito.");
+                    return;
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("No existe ninguna respuesta");
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.printf("La respuesta con el c\u00f3digo %d no existe.%n", code);
+    }
+
+    public static ArrayList getAnswers() {
+        Answer answer = null;
+        ArrayList<Answer> answers = new ArrayList<>();
+        File file = new File(answersFile);
+        if (!file.exists()) {
+            return new ArrayList<Answer>();
+        }
+        try (final RandomAccessFile raf = new RandomAccessFile(answersFile, "r")) {
+            int i = 0;
+            while (i < raf.length()) {
+                if (!(i == raf.getFilePointer())) {
+                    i += raf.getFilePointer() - i;
+                    if (i >= raf.length()) {
+                        break;
+                    }
+                }
+                byte type = Answer.readType(raf);
+                switch (type) {
+                    case 1:
+                        answer = new SimpleAnswer();
+                        break;
+                    case 2:
+                        answer = new YesOrNoAnswer();
+                        break;
+                    case 3:
+                        answer = new MultipleAnswer();
+                        break;
+                }
+                answer.answerReader(raf);
+                if (!answer.deleted) {
+                    answers.add(answer);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("No existe ninguna respuesta");
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return answers;
+    }
+    
+    
     
     
     public abstract boolean answerReader(RandomAccessFile raf);
@@ -44,10 +193,6 @@ public abstract class Answer{
     public int getCode() {
         return code;
     }
-
-    /*public byte getTypeOfAnswer() {
-        return typeOfAnswer;
-    }*/
 
     public byte getCategory() {
         return category;

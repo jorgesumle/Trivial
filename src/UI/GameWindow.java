@@ -1,13 +1,23 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2016 Jorge Maldonado Ventura 
+ *
+ * Este programa es software libre: usted puede redistruirlo y/o modificarlo
+ * bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
+ * la Free Software Foundation; ya sea la versión 3 de la Licencia, o
+ * (a su elección) cualquier versión posterior.
+ *
+ * Este programa se distribuye con la intención de ser útil,
+ * pero SIN NINGUNA GARANTÍA; incluso sin la garantía implícita de
+ * USABILIDAD O UTILIDAD PARA UN FIN PARTICULAR. Vea la
+ * Licencia Pública General GNU para más detalles.
+ *
+ * Usted debería haber recibido una copia de la Licencia Pública General GNU
+ * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
  */
 package UI;
 
 
 import MinitrivialBásico.Answer;
-import MinitrivialBásico.EditMode;
 import MinitrivialBásico.Question;
 import MinitrivialBásico.StringFormat;
 import MinitrivialBásico.Trivial;
@@ -15,6 +25,8 @@ import java.util.ArrayList;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
@@ -34,18 +46,21 @@ public class GameWindow {
     
     private static Text questionText;
     public static void game(){
+        if(turn > 20 && p1Points != p2Points){
+            playAgain();
+        }
         grid.setHgap(7);
         grid.setVgap(11);
         
         grid.setOnMouseClicked(pass -> {});
         
         
-        questions = EditMode.getQuestions();
-        ArrayList<Answer> answers = EditMode.getAnswers();
+        questions = Question.getQuestions();
+        ArrayList<Answer> answers = Answer.getAnswers();
 
         randomQuestion = (int)(Math.random()*questions.size());
 
-        question = questions.get(randomQuestion).getQuestion();
+        question = StringFormat.removeSpacesAtTheBeggining(questions.get(randomQuestion).getQuestion());
         String category = StringFormat.formatCategory(questions.get(randomQuestion).getCategory());
         Answer answer = answers.get(randomQuestion);
 
@@ -76,18 +91,23 @@ public class GameWindow {
 
         questionText = new Text(question);
 
-        grid.add(new Text(category), 3, 3);
-        grid.add(questionText, 3, 4);
+        grid.add(new Text(category), 3, 2);
+        grid.add(questionText, 3, 3);
         grid.setGridLinesVisible(true);
         
-        if(turn > 20 && p1Points != p2Points){
-            playAgain();
-        }
+        
         switch(answer.TYPE_OF_ANSWER){
             case 1: 
                 input.setPrefRowCount(1);
-                input.setPrefColumnCount(30); //Será de una sola fila 
-                grid.add(input, 3, 5);
+                input.setPrefColumnCount(30); //Será de una sola fila
+                input.setOnKeyPressed((KeyEvent e) -> 
+                    {
+                        if(e.getCode().equals(KeyCode.ENTER)){
+                            checkAnswer(input.getText(), StringFormat.removeSpacesAtTheBeggining(answer.getAnswer()));
+                        }
+                    }
+                );
+                grid.add(input, 3, 4);
                 Button enter = new Button("Aceptar");
 
 
@@ -97,14 +117,14 @@ public class GameWindow {
                     }
                 );
                 
-                grid.add(enter, 3, 6);
+                grid.add(enter, 3, 5);
                 break;
             case 2:
                 Button yes = new Button("Sí");
                 Button no = new Button("No");
                 
-                grid.add(yes, 2, 6);
-                grid.add(no, 4, 6);
+                grid.add(yes, 2, 5);
+                grid.add(no, 4, 5);
                 
                 yes.setOnAction(e -> 
                     {
@@ -125,11 +145,11 @@ public class GameWindow {
                 Button option4 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer4()));
                 Button option5 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer5()));
                 
-                grid.add(option1, 2, 5);
-                grid.add(option2, 4, 5);
-                grid.add(option3, 1, 6);
-                grid.add(option4, 3, 6);
-                grid.add(option5, 5, 6);
+                grid.add(option1, 3, 4);
+                grid.add(option2, 3, 5);
+                grid.add(option3, 3, 6);
+                grid.add(option4, 3, 7);
+                grid.add(option5, 3, 8);
                 
                 option1.setOnAction(e -> checkAnswer("1", Byte.toString(mAnswer.getCorrectAnswer())));
                 option2.setOnAction(e -> checkAnswer("2", Byte.toString(mAnswer.getCorrectAnswer())));
@@ -140,14 +160,20 @@ public class GameWindow {
                 break;
         }
     }
-
+    /**
+     * Comprueba cuál es la respuesta correcta y muestra un mensaje por pantalla al usuario
+     * informándole de cuál es la respuesta correcta si ha fallado y diciéndole que
+     * ha acertado en caso contrario
+     * @param userAnswer la respuesta introducida por el usuario
+     * @param correctAnswer la respuesta correcta
+     */
     private static void checkAnswer(String userAnswer, String correctAnswer) {
         turn++;
         grid.getChildren().clear();
         String message = "";
-        if(userAnswer.equals(correctAnswer)){
+        if(userAnswer.toLowerCase().equals(correctAnswer.toLowerCase())){
             message = "Acertaste la pregunta.";
-            if(turn % 2 == 0){
+            if(turn % 2 == 1){
                 p2Points++;
             } else{
                 p1Points++;

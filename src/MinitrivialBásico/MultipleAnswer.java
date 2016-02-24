@@ -27,12 +27,44 @@ import java.util.logging.Logger;
  * @author Jorge Maldonado Ventura 
  */
 public class MultipleAnswer extends Answer{
-    
     String answer2;
     String answer3;
     String answer4;
     String answer5;
     byte correctAnswer;
+    
+    public static void addMultipleAnswer() {
+        boolean validData = false;
+        String answer;
+        String answer2;
+        String answer3;
+        String answer4;
+        String answer5;
+        byte correctAnswer = 0;
+        do {
+            System.out.println("Primero debes introducir todas las posibles respuestas. " + "Despu\u00e9s tendr\u00e1s que especificar cu\u00e1l es la correcta");
+            answer = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la primera respuesta.\n>>> "));
+            answer2 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la segunda respuesta.\n>>> "));
+            answer3 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la tercera respuesta.\n>>> "));
+            answer4 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la cuarta respuesta.\n>>> "));
+            answer5 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la quinta respuesta.\n>>> "));
+            String again = Input.input(String.format("Estas son las preguntas que has introducido:%n" + "    1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%nPara continuar pulsa 'Enter'. Escribe 'n' si has cometido alg\u00fan error y " + "quieres introducir de nuevo las respuestas. " + "%n>>> ", answer, answer2, answer3, answer4, answer5));
+            if (!again.equals("n")) {
+                correctAnswer = Input.byteInput(String.format("\u00bfCu\u00e1l de las respuestas que has introducido es la correcta?%n" + "    1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%n>>> ", answer, answer2, answer3, answer4, answer5));
+                validData = true;
+            }
+        } while (!validData);
+        answerObj = new MultipleAnswer(Question.questionObj.getCode(), false, Question.questionObj.getCategory(), answer, answer2, answer3, answer4, answer5, correctAnswer);
+        try (final RandomAccessFile raf = new RandomAccessFile(Answer.answersFile, "rw")) {
+            long sizeOfQuestionsFile = raf.length();
+            raf.seek(sizeOfQuestionsFile);
+            answerObj.answerWriter(raf);
+        } catch (IOException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
     public MultipleAnswer() {
         code = -1;
         deleted = true;

@@ -38,10 +38,10 @@ public class Trivial extends Application{
     public static String player1Name;
     public static String player2Name;
     
-    public void start(Stage stage){                
+    public void start(Stage stage){
         GridPane mainScreen = new GridPane();
         mainScreen.setVgap(25);
-        mainScreen.setHgap(25);
+        mainScreen.setHgap(5);
 
         Scene enterNames = new Scene(mainScreen, 300, 300);
         
@@ -99,9 +99,8 @@ public class Trivial extends Application{
                         + "    3. Buscar una pregunta y/o su respuesta.\n"
                         + "    4. Modificar una pregunta y/o su respuesta.\n" //Falta el o
                         + "    5. Borrado de preguntas y respuestas.\n"
-                        + "    6. Borrar todas las preguntas\n"
-                        + "    7. Responde a una pregunta elegida al azar.\n"
-                        + "    8. Salir del programa.\n";
+                        + "    6. Responde a una pregunta elegida al azar.\n"
+                        + "    7. Salir del programa.\n";
                 byte option;
                 do{
                     option = Input.byteInput("¿Qué quieres hacer?\n" + menu + ">>> ");
@@ -118,17 +117,17 @@ public class Trivial extends Application{
                                     + ">>> "
                                 );
                                 if(type == 1 || type == 2 || type == 3){
-                                    EditMode.addQuestion();
+                                    Question.addQuestion();
                                 }
                                 switch(type){
                                     case 1:
-                                        EditMode.addSimpleAnswer();
+                                        SimpleAnswer.addSimpleAnswer();
                                         break;
                                     case 2:
-                                        EditMode.addYesOrNoAnswer();
+                                        YesOrNoAnswer.addYesOrNoAnswer();
                                         break;
                                     case 3:
-                                        EditMode.addMultipleAnswer();
+                                        MultipleAnswer.addMultipleAnswer();
                                         break;
                                     case 4:
                                         String simpleQuestionExample = "¿En qué año nació Francisco Ibáñez? [pregunta] 1936 [respuesta].";
@@ -201,13 +200,15 @@ public class Trivial extends Application{
                             } while(toModify > 3 || toModify < 1);
                             switch(toModify){
                                 case 1:
-                                    EditMode.modifyQuestionAndAnswer(Input.intInput("Introduce el código de la pregunta y la respuesta que quieres modificar\n>>> "));
+                                    int code = Input.intInput("Introduce el código de la pregunta y la respuesta que quieres modificar\n>>> ");
+                                    Question.modifyQuestion(code);
+                                    Answer.modifyAnswer(code);
                                     break;
                                 case 2:
-                                    EditMode.modifyQuestion(Input.intInput("Introduce el código de la pregunta que quieres modificar\n>>> "));
+                                    Question.modifyQuestion(Input.intInput("Introduce el código de la pregunta que quieres modificar\n>>> "));
                                     break;
                                 case 3:
-                                    EditMode.modifyAnswer(Input.intInput("Introduce el código de la respuesta que quieres modificar\n>>> "));
+                                    Answer.modifyAnswer(Input.intInput("Introduce el código de la respuesta que quieres modificar\n>>> "));
                                     break;                                    
                             }
                             break;
@@ -216,31 +217,50 @@ public class Trivial extends Application{
                             do{
                                 deleteOption = Input.byteInput("Elige una opción:\n"
                                         + "    1) Borrar una pregunta.\n"
-                                        + "    2) Borrar todas las preguntas.\n>>> ");
-                            } while(deleteOption < 1 || deleteOption > 2);
+                                        + "    2) Borrar todas las preguntas.\n"
+                                        + "    3) Eliminar definitivamente las preguntas que ya han sido borradas.\n"
+                                        + "    4) Volver al menú anterior.\n>>> ");
+                            } while(deleteOption < 1 || deleteOption > 4);
                             switch(deleteOption){
                                 case 1: 
-                                    EditMode.removeQuestionAndAnswer(Input.intInput("Introduce el código de la pregunta y la respuesta que quieres borrar\n>>> "));
+                                    int code = Input.intInput("Introduce el código de la pregunta y la respuesta que quieres borrar\n>>> ");
+                                    Question.removeQuestion(code);
+                                    Answer.removeAnswer(code);
                                     break;
                                 case 2:
-                                    EditMode.removeAll();
-                                    break;  
+                                    //Confirmación
+                                    String confirmation;
+                                    do{
+                                        confirmation = Input.input("¿Estás seguro de que quieres eliminar todas las preguntas y respuestas? ('s' o 'n')\n>>> ").toLowerCase();
+                                    } while(confirmation.charAt(0) != 's' && confirmation.charAt(0) != 'n');
+                                    if(confirmation.charAt(0) == 'n'){
+                                        break;
+                                    }
+                                    //\\
+                                    Question.removeQuestionsPermanently();
+                                    Answer.removeAnswersPermanently();
+                                    System.out.println("Se han borrado con éxito todas las preguntas y respuestas.");
+                                    break;
+                                case 3:
+                                    Question.removeDeletedQuestions();
+                                    Answer.removeDeletedAnswers();
+                                    System.out.println("Se han borrado definitivamente las preguntas borradas con éxito.");
+                                    break;
+                                case 4: 
+                                    break;
                             }
                             break;
                         case 6:
-                            EditMode.removeAll();
+                            ConsoleGame.testGame();
                             break;
                         case 7:
-                            EditMode.testGame();
-                            break;
-                        case 8:
                             System.exit(0);
                             break;
                         default:
                             System.out.println("Por favor, introduce una de las opciones disponibles.");
                             break;
                     }
-                } while(option != 8);
+                } while(option != 7);
             }
         } else{
             launch(args);
