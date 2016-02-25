@@ -16,29 +16,44 @@ public class Query {
     
     final static byte LENGTH_OF_CODE_FIELD = 10;
     final static byte LENGTH_OF_CATEGORY_FIELD = 21;
-    /**
-     * Muestra todas las preguntas existentes en el fichero de preguntas, excepto
-     * las que han sido borradas.
-     */
-    public static void showQuestions(){
-        ArrayList<Question> questions = Question.getQuestions();
-        ArrayList<String> category = new ArrayList<>();
-        int lengthOfLongestQuestion = QUESTIONS_HEADER.length();
-        for(int i = 0; i < questions.size(); i++){
-            questions.get(i).setQuestion(StringFormat.removeSpacesAtTheBeggining(questions.get(i).question));
-            category.add(StringFormat.formatCategory(questions.get(i).getCategory()));
-            if(questions.get(i).question.length() > lengthOfLongestQuestion)
-                lengthOfLongestQuestion = questions.get(i).question.length();
+    
+    public static void showTable(String[] headers, byte[] minFieldLength, String[][] fields){
+   
+        for(int i = 0; i < fields.length; i++){
+            for(int j = 0; j < fields[0].length; j++){
+                if(fields[i][j].length() > minFieldLength[j]){
+                    minFieldLength[j] = (byte)fields[i][j].length();
+                }
+            }
         }
+        String line = "";
+        for(int i = 0; i < headers.length; i++){
+            line += String.format("+%s", StringFormat.repeatChar('-', minFieldLength[i] + 2));
+        }
+        line += "+";
         
-        System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + 8));
-        System.out.printf("| %" + LENGTH_OF_CODE_FIELD + "s | %-21s | %-" + lengthOfLongestQuestion + "s |%n", CODE_HEADER, CATEGORY_HEADER, QUESTIONS_HEADER);
-        System.out.printf("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + 8));
-        for(int i = 0; i < questions.size(); i++){
-            System.out.printf("| %" + LENGTH_OF_CODE_FIELD + "d | %-21s | %-" + lengthOfLongestQuestion + "s |%n", questions.get(i).getCode(), category.get(i), questions.get(i).getQuestion());
+        String headersLine = "";
+        for(int i = 0; i < headers.length; i++){
+            headersLine += String.format("|%" + (minFieldLength[i] + 2) + "S", StringFormat.center(headers[i], minFieldLength[i]));
+        } 
+        headersLine += "|";
+        
+        //Mostrar tabla
+        System.out.println(line);
+        System.out.println(headersLine);
+        System.out.println(line);
+            //Contenido
+        for(int i = 0; i < fields.length; i++){
+            for(int j = 0; j < fields[0].length; j++){
+                System.out.printf("|%s", " " + StringFormat.center(fields[i][j], minFieldLength[j]) + " ");
+            }
+            System.out.println("|");
         }
-        System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + 8));
+            //\\
+        System.out.println(line);
+        //\\        
     }
+    
     public static void showAnswers(){
         ArrayList<Answer> answers = Answer.getAnswers();
         ArrayList<String> category = new ArrayList<>();

@@ -21,6 +21,13 @@ package MinitrivialBásico;
  * @author Jorge Maldonado Ventura
  */
 public class StringFormat {
+    public static String center(String text, int len){
+        String out = String.format("%"+len+"s%s%"+len+"s", "",text,"");
+        float mid = (out.length()/2);
+        float start = mid - (len/2);
+        float end = start + len; 
+        return out.substring((int)start, (int)end);
+    }
     /**
      * Elimina los espacios en blanco a la izquierda del texto. Por texto se entiende
      * cualquier carácter excepto el de espacio en blanco.

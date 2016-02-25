@@ -17,6 +17,7 @@
 
 package MinitrivialBásico;
 
+import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -147,6 +148,13 @@ public class Trivial extends Application{
                             break;
                         case 2:
                             byte query = 0;
+                            ArrayList<Question> questions = Question.getQuestions();
+                            ArrayList<Answer> answers = Answer.getAnswers();
+                            String[] category = new String[questions.size()];
+                            for(int i = 0; i < category.length; i++){
+                                category[i] = (StringFormat.formatCategory(questions.get(i).getCategory()));
+                            }
+                            
                             do{
                                 query = Input.byteInput("Elige una opción:\n"
                                         + "    1) Ver todas las preguntas.\n"
@@ -156,10 +164,67 @@ public class Trivial extends Application{
                                         + "    5) Ver todas las preguntas y respuestas múltiples.\n"
                                         + "    6) Ver todas las preguntas y respuestas.\n"
                                         + "    7) Volver al menú anterior.\n>>> ");
-                                switch(query){ //En desarrollo.
-                                    case 1: Query.showQuestions(); break;
+                                
+                                final String QUESTIONS_HEADER = "Pregunta";
+                                final String ANSWERS_HEADER = "Respuesta";
+                                String[][] fields;
+                                
+                                final byte MIN_LENGTH_OF_ANSWER_FIELD = (byte)ANSWERS_HEADER.length();
+                                final byte MIN_LENGTH_OF_CODE_FIELD = 10;
+                                final byte MIN_LENGTH_OF_CATEGORY_FIELD = 21;
+                                final byte MIN_LENGTH_OF_QUESTION_FIELD = (byte)QUESTIONS_HEADER.length();
+                                //final String headers[]; Usalo cuando descubras por qué falla lo otro.
+                                    //También para minFieldLength
+                                switch(query){ //En desarrollo.                             
+                                    case 1: //    1) Ver todas las preguntas.
+                                        final String headers[] = {"Código", "Categoría", "Pregunta"};
+                                        byte minFieldLength[] = {MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD};
+                                        fields = new String[questions.size()][minFieldLength.length];
+                                        for(int i = 0; i < questions.size(); i++){
+                                            for(int j = 0; j < minFieldLength.length; j++){
+                                                switch(j){
+                                                    case 0: 
+                                                        fields[i][j] = Integer.toString(questions.get(i).getCode()); 
+                                                        break;
+                                                    case 1: 
+                                                        fields[i][j] = StringFormat.formatCategory(questions.get(i).getCategory()); 
+                                                        break;
+                                                    case 2: 
+                                                        fields[i][j] = StringFormat.removeSpacesAtTheBeggining(questions.get(i).getQuestion()); 
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                        Query.showTable(headers, minFieldLength, fields);
+                                        break;
                                     case 2: Query.showAnswers(); break;
-                                    case 3: Query.showSimpleQuestionsAndAnswers(); break;
+                                    case 3:/*
+                                        final String[] headers2 = {"Código", "Categoría", "Pregunta", "Respuesta"};
+                                        final ArrayList<SimpleAnswer> simpleAnswers = SimpleAnswer.getSimpleAnswers(answers);
+                                        final ArrayList<Question> simpleQuestions;
+                                        byte minFieldLength2[] = {MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD, MIN_LENGTH_OF_ANSWER_FIELD};
+                                        fields = new String[questions.size()][minFieldLength2.length];
+                                        for(int i = 0; i < simpleAnswers.size(); i++){
+                                            for(int j = 0; j < minFieldLength2.length; j++){
+                                                switch(j){
+                                                    case 0: 
+                                                        fields[i][j] = Integer.toString(questions.get(i).getCode()); 
+                                                        break;
+                                                    case 1: 
+                                                        fields[i][j] = StringFormat.formatCategory(questions.get(i).getCategory()); 
+                                                        break;
+                                                    case 2: 
+                                                        fields[i][j] = StringFormat.removeSpacesAtTheBeggining(questions.get(i).getQuestion()); 
+                                                        break;
+                                                    case 3:
+                                                        fields[i][j] = StringFormat.removeSpacesAtTheBeggining(simpleAnswers.get(i).getAnswer());
+                                                        break;
+                                                }
+                                            }
+                                        }*/
+                                        //Query.showTable(headers2, minFieldLength2, fields);
+                                        Query.showSimpleQuestionsAndAnswers(); 
+                                        break;
                                     case 4: Query.showYesOrNoQuestions(); break;
                                     case 5: break;
                                     case 6: break;

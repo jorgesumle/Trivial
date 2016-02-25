@@ -37,6 +37,7 @@ public class Question {
     public boolean deleted;
     public String question;
     
+    public final static byte QUESTION_LENGTH = 120;
     protected static String questionsFile = "preguntas.dat";
     protected static Question questionObj;
     protected final static short QUESTION_OBJECT_LENGTH = 128;
@@ -147,7 +148,7 @@ public class Question {
     }
     
     
-    public final static byte QUESTION_LENGTH = 120;
+    
     public Question() {
         code = 0;
         question = "";
@@ -252,4 +253,11 @@ public class Question {
             Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    /*public static void getSimpleQuestions(ArrayList<Question> questions){
+        ArrayList<Question> simpleQuestions = new ArrayList<>();
+        for(int i = 0; i < questions.size(); i++){
+            if()
+        }
+    }*/
 }

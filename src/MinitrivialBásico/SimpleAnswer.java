@@ -19,6 +19,7 @@ package MinitrivialBásico;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -101,5 +102,17 @@ public class SimpleAnswer extends Answer{
                 + "Categoría: " + StringFormat.formatCategory(category) + ".\n"
 //                + "Borrada: " + deleted + ".\n"
                 + "Respuesta: " + answer + ".\n";        
+    }
+    /**
+     * Devuelve las re
+     */
+    public static ArrayList<SimpleAnswer> getSimpleAnswers(ArrayList<Answer> answers){
+        ArrayList<SimpleAnswer> simpleAnswers = new ArrayList<>();
+        for(int i = 0; i < answers.size(); i++){
+            if(answers.get(i).TYPE_OF_ANSWER == 1){
+                simpleAnswers.add((SimpleAnswer)answers.get(i));
+            }
+        }
+        return simpleAnswers;
     }
 }
