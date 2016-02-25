@@ -168,6 +168,8 @@ public class Trivial extends Application{
                                 final String QUESTIONS_HEADER = "Pregunta";
                                 final String ANSWERS_HEADER = "Respuesta";
                                 String[][] fields;
+                                String[] headers;
+                                byte minFieldLength[];
                                 
                                 final byte MIN_LENGTH_OF_ANSWER_FIELD = (byte)ANSWERS_HEADER.length();
                                 final byte MIN_LENGTH_OF_CODE_FIELD = 10;
@@ -177,8 +179,8 @@ public class Trivial extends Application{
                                     //También para minFieldLength
                                 switch(query){ //En desarrollo.                             
                                     case 1: //    1) Ver todas las preguntas.
-                                        final String headers[] = {"Código", "Categoría", "Pregunta"};
-                                        byte minFieldLength[] = {MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD};
+                                        headers = new String[]{"Código", "Categoría", "Pregunta"};
+                                        minFieldLength = new byte[]{MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD};
                                         fields = new String[questions.size()][minFieldLength.length];
                                         for(int i = 0; i < questions.size(); i++){
                                             for(int j = 0; j < minFieldLength.length; j++){
@@ -199,13 +201,13 @@ public class Trivial extends Application{
                                         break;
                                     case 2: Query.showAnswers(); break;
                                     case 3:/*
-                                        final String[] headers2 = {"Código", "Categoría", "Pregunta", "Respuesta"};
+                                        headers = new String[] {"Código", "Categoría", "Pregunta", "Respuesta"};
                                         final ArrayList<SimpleAnswer> simpleAnswers = SimpleAnswer.getSimpleAnswers(answers);
                                         final ArrayList<Question> simpleQuestions;
-                                        byte minFieldLength2[] = {MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD, MIN_LENGTH_OF_ANSWER_FIELD};
-                                        fields = new String[questions.size()][minFieldLength2.length];
+                                        minFieldLength = new byte[]{MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD, MIN_LENGTH_OF_ANSWER_FIELD};
+                                        fields = new String[questions.size()][minFieldLength.length];
                                         for(int i = 0; i < simpleAnswers.size(); i++){
-                                            for(int j = 0; j < minFieldLength2.length; j++){
+                                            for(int j = 0; j < minFieldLength.length; j++){
                                                 switch(j){
                                                     case 0: 
                                                         fields[i][j] = Integer.toString(questions.get(i).getCode()); 
@@ -222,7 +224,7 @@ public class Trivial extends Application{
                                                 }
                                             }
                                         }*/
-                                        //Query.showTable(headers2, minFieldLength2, fields);
+                                        //Query.showTable(headers, minFieldLength, fields);
                                         Query.showSimpleQuestionsAndAnswers(); 
                                         break;
                                     case 4: Query.showYesOrNoQuestions(); break;
