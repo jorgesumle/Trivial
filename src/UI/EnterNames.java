@@ -20,6 +20,8 @@ import MinitrivialBásico.Trivial;
 import static MinitrivialBásico.Trivial.grid;
 import static MinitrivialBásico.Trivial.player1Name;
 import static MinitrivialBásico.Trivial.player2Name;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -34,6 +36,7 @@ import javafx.scene.text.Text;
 public class EnterNames {
     public static void enterNames(){
         GridPane mainScreen = new GridPane();
+        mainScreen.setAlignment(Pos.CENTER);
         mainScreen.setVgap(25);
         mainScreen.setHgap(5);
 
@@ -43,6 +46,7 @@ public class EnterNames {
 
         Text title = new Text("TRIVIAL");
         title.setId("title");
+        mainScreen.setHalignment(title, HPos.CENTER);
         
         Label playerLabel1 = new Label("Jugador 1");
         TextField player1 = new TextField();
@@ -61,16 +65,18 @@ public class EnterNames {
         mainScreen.add(player2, 2, 3);
         
         mainScreen.add(play, 2, 4);
+        mainScreen.setHalignment(play, HPos.CENTER);
         mainScreen.add(exit, 2, 5);
+        mainScreen.setHalignment(exit, HPos.CENTER);
         
         
         play.setOnAction(e -> 
             {
                 player1Name = player1.getText(); 
                 player2Name = player2.getText();
-                
-                grid = new GridPane();
-                UI.GameWindow.game();
+
+                grid = new GridPane(); //Aquí falla.
+                GameWindow.game();
                 Scene game = new Scene(grid, 700, 500);
                 game.getStylesheets().add(UI.GameWindow.class.getResource("gameSc.css").toExternalForm());
                 Trivial.stage.setScene(game);

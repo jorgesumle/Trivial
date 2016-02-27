@@ -64,6 +64,7 @@ public class GameWindow {
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
         if(turn > 20 && p1Points != p2Points){
             playAgain();
+            return;
         }
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(7);
@@ -114,7 +115,7 @@ public class GameWindow {
         
 
         
-        Text categoryText = new Text(category);
+        Label categoryText = new Label(category);
         grid.setHalignment(categoryText, HPos.CENTER);
         grid.add(categoryText, 3, 2);
         
@@ -127,13 +128,13 @@ public class GameWindow {
             case 1: 
                 input.setPrefRowCount(1);
                 input.setPrefColumnCount(30); //Será de una sola fila
-                input.setOnKeyPressed((KeyEvent e) -> 
+                /*input.setOnKeyPressed((KeyEvent e) -> 
                     {
                         if(e.getCode().equals(KeyCode.ENTER)){
                             checkAnswer(input.getText(), StringFormat.removeSpacesAtTheBeggining(answer.getAnswer()));
                         }
                     }
-                );
+                );*/
                 grid.add(input, 3, 4);
                 Button enter = new Button("Aceptar");
                 grid.setHalignment(enter, HPos.CENTER);
@@ -208,38 +209,38 @@ public class GameWindow {
             grid.setBackground(
                     new Background(
                             new BackgroundImage(
-                                    new Image(UI.GameWindow.class.getResource("thumbsUp.jpg").toExternalForm()), 
+                                    new Image(UI.GameWindow.class.getResource("thumbsUpHD.jpg").toExternalForm()), 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
             if(turn % 2 == 1){
-                message = "¡Bien hecho, " + Trivial.player1Name + "! Acertaste la pregunta.";
+                message = "¡Bien hecho, " + Trivial.player2Name + "! Acertaste la pregunta.";
                 p2Points++;
             } else{
-                message = "¡Bien hecho, " + Trivial.player2Name + "! Acertaste la pregunta.";
+                message = "¡Bien hecho, " + Trivial.player1Name + "! Acertaste la pregunta.";
                 p1Points++;
             }
         } else{
             grid.setBackground(
                     new Background(
                             new BackgroundImage(
-                                    new Image(UI.GameWindow.class.getResource("thumbsDown.jpg").toExternalForm()), 
+                                    new Image(UI.GameWindow.class.getResource("thumbsDownRedHD.jpg").toExternalForm()), 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
             if(turn % 2 == 1){
-                message = "¡Qué pena, " + Trivial.player1Name + "! Fallaste la pregunta.";
-            } else{
                 message = "¡Qué pena, " + Trivial.player2Name + "! Fallaste la pregunta.";
+            } else{
+                message = "¡Qué pena, " + Trivial.player1Name + "! Fallaste la pregunta.";
             }
         }
-        Text result = new Text(message);
+        Label result = new Label(message);
         result.setId("normalText");
         grid.setHalignment(result, HPos.CENTER);
         
-        Text keepPlaying = new Text("Clica en la ventana o pulsa Enter para continuar jugando.");
+        Label keepPlaying = new Label("Clica en la ventana o pulsa Enter para continuar jugando.");
         keepPlaying.setId("normalText");
         grid.setHalignment(keepPlaying, HPos.CENTER);
 
@@ -255,8 +256,10 @@ public class GameWindow {
         );
         grid.setOnKeyPressed((KeyEvent e) ->
             {
-                grid.getChildren().clear();
-                game();
+                if(e.getCode().equals(KeyCode.ENTER)){
+                    grid.getChildren().clear();
+                    game();
+                }
             }
         );
     }
@@ -270,13 +273,22 @@ public class GameWindow {
         Label playAgain = new Label("¿Queréis jugar una nueva partida?");
         Button yes = new Button("Sí");
         Button no = new Button("No");
-        
+        //Depurando
+        grid.setVisible(true);
         grid.add(playAgain, 1, 0, 2, 1);
+        grid.setHalignment(playAgain, HPos.CENTER);
+        //Sí
         grid.add(yes, 1, 1);
+        grid.setHalignment(yes, HPos.CENTER);
+        //\\No
         grid.add(no, 2, 1);
-
+        grid.setHalignment(no, HPos.CENTER);
+        //\\
         yes.setOnAction(e -> 
             {
+                turn = 1;
+                p1Points = 0;
+                p2Points = 0;
                 Trivial.start(); //No funciona bien del todo.
             }
         );

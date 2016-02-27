@@ -18,6 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Created on : 27-feb-2016, 16:49:49
     Author     : Jorge Maldonado Ventura
 */
+.label{
+    -fx-background-color : white;
+}
 #player{
     -fx-font: 16px Tahoma;
     -fx-stroke: gray;
@@ -25,10 +28,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-font-weight: bold;
 }
 #points{
-    -fx-font: 16px Consolas;
-    -fx-stroke: #fffafa;
-    -fx-stroke-width: 1;
-    -fx-font-weight: bold;   
+    -fx-font: 16px Verdana;
+    -fx-stroke: #222221;
+    -fx-stroke-width: 1;  
 }
 .text{
     -fx-font: 14px Cambria;
