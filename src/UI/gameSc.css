@@ -1,0 +1,41 @@
+/*
+Copyright (C) 2016 Jorge Maldonado Ventura
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/* 
+    Created on : 27-feb-2016, 16:49:49
+    Author     : Jorge Maldonado Ventura
+*/
+#player{
+    -fx-font: 16px Tahoma;
+    -fx-stroke: gray;
+    -fx-stroke-width: 1;
+    -fx-font-weight: bold;
+}
+#points{
+    -fx-font: 16px Consolas;
+    -fx-stroke: #fffafa;
+    -fx-stroke-width: 1;
+    -fx-font-weight: bold;   
+}
+.text{
+    -fx-font: 14px Cambria;
+    -fx-font-weight: bold;   
+}
+#normalText{
+    -fx-font: 15px Colibri;
+    -fx-stroke: #333323;
+    -fx-stroke-width: 1;
+}

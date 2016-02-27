@@ -22,11 +22,19 @@ import MinitrivialBásico.Question;
 import MinitrivialBásico.StringFormat;
 import MinitrivialBásico.Trivial;
 import java.util.ArrayList;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
@@ -46,9 +54,18 @@ public class GameWindow {
     
     private static Text questionText;
     public static void game(){
+        grid.setBackground(
+                    new Background(
+                            new BackgroundImage(
+                                    new Image(UI.GameWindow.class.getResource("bubbleBackground3.png").toExternalForm()), 
+                                    BackgroundRepeat.NO_REPEAT, 
+                                    BackgroundRepeat.NO_REPEAT, 
+                                    BackgroundPosition.CENTER, 
+                                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
         if(turn > 20 && p1Points != p2Points){
             playAgain();
         }
+        grid.setAlignment(Pos.CENTER);
         grid.setHgap(7);
         grid.setVgap(11);
         
@@ -67,13 +84,20 @@ public class GameWindow {
 
         //Jugadores, puntos, turno
         Text player1 = new Text(Trivial.player1Name);
-        Text player1Points = new Text(Short.toString(p1Points) + " puntos");
+        player1.setId("player");
+        Text player1Points = new Text(Short.toString(p1Points)/* + " puntos"*/);
+        player1Points.setId("points");
+        grid.setHalignment(player1Points, HPos.CENTER);
 
-        Text numQuestion = new Text(Short.toString(turn));
+        Text numQuestion = new Text("Turno " + Short.toString(turn));
+        numQuestion.setId("points");
+        grid.setHalignment(numQuestion, HPos.CENTER);
 
         Text player2 = new Text(Trivial.player2Name);
-        Text player2Points = new Text(Short.toString(p2Points) + " puntos");
-
+        player2.setId("player");
+        Text player2Points = new Text(Short.toString(p2Points)/* + " puntos"*/);
+        player2Points.setId("points");
+        grid.setHalignment(player2Points, HPos.CENTER);
         
 
         grid.add(player1, 0, 0);
@@ -89,12 +113,15 @@ public class GameWindow {
         
         
 
-        questionText = new Text(question);
-
-        grid.add(new Text(category), 3, 2);
-        grid.add(questionText, 3, 3);
-        grid.setGridLinesVisible(true);
         
+        Text categoryText = new Text(category);
+        grid.setHalignment(categoryText, HPos.CENTER);
+        grid.add(categoryText, 3, 2);
+        
+        questionText = new Text(question);
+        questionText.setId("normalText");
+        grid.setHalignment(questionText, HPos.CENTER);
+        grid.add(questionText, 3, 3);
         
         switch(answer.TYPE_OF_ANSWER){
             case 1: 
@@ -109,6 +136,7 @@ public class GameWindow {
                 );
                 grid.add(input, 3, 4);
                 Button enter = new Button("Aceptar");
+                grid.setHalignment(enter, HPos.CENTER);
 
 
                 enter.setOnAction(e -> 
@@ -140,10 +168,15 @@ public class GameWindow {
             case 3:
                 MinitrivialBásico.MultipleAnswer mAnswer = (MinitrivialBásico.MultipleAnswer)(answer);
                 Button option1 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer()));
+                grid.setHalignment(option1, HPos.CENTER);
                 Button option2 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer2()));
+                grid.setHalignment(option2, HPos.CENTER);
                 Button option3 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer3()));
+                grid.setHalignment(option3, HPos.CENTER);
                 Button option4 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer4()));
+                grid.setHalignment(option4, HPos.CENTER);
                 Button option5 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer5()));
+                grid.setHalignment(option5, HPos.CENTER);
                 
                 grid.add(option1, 3, 4);
                 grid.add(option2, 3, 5);
@@ -172,23 +205,55 @@ public class GameWindow {
         grid.getChildren().clear();
         String message = "";
         if(userAnswer.toLowerCase().equals(correctAnswer.toLowerCase())){
-            message = "Acertaste la pregunta.";
+            grid.setBackground(
+                    new Background(
+                            new BackgroundImage(
+                                    new Image(UI.GameWindow.class.getResource("thumbsUp.jpg").toExternalForm()), 
+                                    BackgroundRepeat.NO_REPEAT, 
+                                    BackgroundRepeat.NO_REPEAT, 
+                                    BackgroundPosition.CENTER, 
+                                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
             if(turn % 2 == 1){
+                message = "¡Bien hecho, " + Trivial.player1Name + "! Acertaste la pregunta.";
                 p2Points++;
             } else{
+                message = "¡Bien hecho, " + Trivial.player2Name + "! Acertaste la pregunta.";
                 p1Points++;
             }
         } else{
-            message = "Fallaste la pregunta.";
+            grid.setBackground(
+                    new Background(
+                            new BackgroundImage(
+                                    new Image(UI.GameWindow.class.getResource("thumbsDown.jpg").toExternalForm()), 
+                                    BackgroundRepeat.NO_REPEAT, 
+                                    BackgroundRepeat.NO_REPEAT, 
+                                    BackgroundPosition.CENTER, 
+                                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
+            if(turn % 2 == 1){
+                message = "¡Qué pena, " + Trivial.player1Name + "! Fallaste la pregunta.";
+            } else{
+                message = "¡Qué pena, " + Trivial.player2Name + "! Fallaste la pregunta.";
+            }
         }
         Text result = new Text(message);
+        result.setId("normalText");
+        grid.setHalignment(result, HPos.CENTER);
         
-        Text keepPlaying = new Text("Clica en la ventana para continuar jugando.");
-        
+        Text keepPlaying = new Text("Clica en la ventana o pulsa Enter para continuar jugando.");
+        keepPlaying.setId("normalText");
+        grid.setHalignment(keepPlaying, HPos.CENTER);
+
+
         grid.add(result, 1, 1);
         grid.add(keepPlaying, 1, 3);
         grid.setVisible(true);
         grid.setOnMouseClicked(e -> 
+            {
+                grid.getChildren().clear();
+                game();
+            }
+        );
+        grid.setOnKeyPressed((KeyEvent e) ->
             {
                 grid.getChildren().clear();
                 game();
@@ -212,7 +277,7 @@ public class GameWindow {
 
         yes.setOnAction(e -> 
             {
-                Trivial.main(new String[]{}); //No funciona.
+                Trivial.start(); //No funciona bien del todo.
             }
         );
         no.setOnAction(e -> 

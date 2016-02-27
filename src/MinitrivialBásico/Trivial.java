@@ -17,6 +17,7 @@
 
 package MinitrivialBásico;
 
+import UI.EnterNames;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -38,56 +39,17 @@ public class Trivial extends Application{
     public static GridPane grid;
     public static String player1Name;
     public static String player2Name;
-    
-    public void start(Stage stage){
-        GridPane mainScreen = new GridPane();
-        mainScreen.setVgap(25);
-        mainScreen.setHgap(5);
-
-        Scene enterNames = new Scene(mainScreen, 300, 300);
-        
-        enterNames.getStylesheets().add(UI.GameWindow.class.getResource("namesSc.css").toExternalForm());
-
-        Text title = new Text("TRIVIAL");
-        title.setId("title");
-        
-        Label playerLabel1 = new Label("Jugador 1");
-        TextField player1 = new TextField();
-        Label playerLabel2 = new Label("Jugador 2");
-        TextField player2 = new TextField();
-        Button play = new Button("Jugar");
-        play.setId("playButton");
-        Button exit = new Button("Salir");
-        exit.setOnAction(e -> System.exit(0));
-        
-        mainScreen.add(title, 1, 1, 2, 1);
-        
-        mainScreen.add(playerLabel1, 1, 2);
-        mainScreen.add(player1, 2, 2);
-        mainScreen.add(playerLabel2, 1, 3);
-        mainScreen.add(player2, 2, 3);
-        
-        mainScreen.add(play, 2, 4);
-        mainScreen.add(exit, 2, 5);
-        
-        
-        play.setOnAction(e -> 
-            {
-                player1Name = player1.getText(); 
-                player2Name = player2.getText();
-                
-                grid = new GridPane();
-                UI.GameWindow.game();
-                Scene game = new Scene(grid, 700, 500);
-                stage.setScene(game);
-            }
-        );
-        
-        
+    public static Stage stage;
+    public static void start(){
+        EnterNames.enterNames();
         stage.setTitle("Trivial");
         stage.getIcons().add(new Image(UI.GameWindow.class.getResource("icon.png").toExternalForm()));
-        stage.setScene(enterNames);
         stage.show();
+    }
+    @Override
+    public void start(Stage primaryStage){
+        stage = primaryStage;
+        start();
     }
     /**
      * @param args los parámetros de la línea de comandos
