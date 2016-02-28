@@ -72,14 +72,29 @@ public class EnterNames {
         
         play.setOnAction(e -> 
             {
-                player1Name = player1.getText(); 
-                player2Name = player2.getText();
-
-                grid = new GridPane(); //Aquí falla.
-                GameWindow.game();
-                Scene game = new Scene(grid, 700, 500);
-                game.getStylesheets().add(UI.GameWindow.class.getResource("gameSc.css").toExternalForm());
-                Trivial.stage.setScene(game);
+                if(player1.getText().equals("")){
+                    player1Name = "Jugador 1";
+                } else{
+                    player1Name = player1.getText(); 
+                }
+                if(player2.getText().equals("")){
+                    player2Name = "Jugador 2";
+                } else{
+                    player2Name = player2.getText();
+                }
+                Scene game = null;
+                if(grid == null){ //La primera vez que se juega
+                    grid = new GridPane();
+                    GameWindow.game();
+                    game = new Scene(grid, 700, 500);
+                    game.getStylesheets().add(UI.GameWindow.class.getResource("gameSc.css").toExternalForm());
+                    Trivial.stage.setScene(game);
+                }
+                else{ //Cuando ya se ha jugado una vez o más.
+                    grid.getChildren().clear();
+                    GameWindow.game();
+                    Trivial.stage.setScene(grid.getScene());
+                }
             }
         );
         Trivial.stage.setScene(enterNames);
