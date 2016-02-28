@@ -51,6 +51,7 @@ public class GameWindow {
     private static short turn = 1;
     private static short p1Points = 0;
     private static short p2Points = 0;
+    private static Answer answer;
     
     private static Text questionText;
     public static void game(){
@@ -80,7 +81,7 @@ public class GameWindow {
 
         question = StringFormat.removeSpacesAtTheBeggining(questions.get(randomQuestion).getQuestion());
         String category = StringFormat.formatCategory(questions.get(randomQuestion).getCategory());
-        Answer answer = answers.get(randomQuestion);
+        answer = answers.get(randomQuestion);
 
 
         //Jugadores, puntos, turno
@@ -230,10 +231,22 @@ public class GameWindow {
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
+            
+            if(answer.TYPE_OF_ANSWER == 3){
+                //sobreescribo la variable
+                correctAnswer = MinitrivialBásico.MultipleAnswer.getAnswerByCorrectAnswer(answer.TYPE_OF_ANSWER, (MinitrivialBásico.MultipleAnswer)(answer));
+            } 
+            else if(answer.TYPE_OF_ANSWER == 2){
+                correctAnswer = "";
+            }
+            
             if(turn % 2 == 1){
                 message = "¡Qué pena, " + Trivial.player2Name + "! Fallaste la pregunta.";
             } else{
                 message = "¡Qué pena, " + Trivial.player1Name + "! Fallaste la pregunta.";
+            }
+            if(!correctAnswer.equals("")){
+                message += " La respuesta correcta es «" + StringFormat.removeSpacesAtTheBeggining(correctAnswer) + "».";
             }
         }
         Label result = new Label(message);
