@@ -51,7 +51,14 @@ public class Trivial extends Application{
      */
     public static void main(String[] args) {
         if(args.length > 0){
-            if(args[0].equals("editar")){ //Creación y edición de preguntas y respuestas para el trivial.
+            //LISTA DE PARÁMETROS (acepta minúsculas y mayúsculas)
+                /*
+                e
+                edit
+                editar
+                */
+            String parameter = args[0].toLowerCase();
+            if(parameter.equals("editar") || parameter.equals("e") || parameter.equals("edit")){ //Creación y edición de preguntas y respuestas para el trivial.
                 final String menu = "    1. Añadir una pregunta.\n"
                         + "    2. Consultar datos.\n"
                         + "    3. Buscar una pregunta y/o su respuesta.\n"
@@ -285,6 +292,17 @@ public class Trivial extends Application{
                             break;
                     }
                 } while(option != 7);
+            } else if(parameter.equals("help") || parameter.equals("h") || parameter.equals("ayuda") || parameter.equals("a")){
+                System.out.println("Sintaxis: Trivial [parámetro].\n"
+                        + "A continuación se muestra una lista con todos los parámetros válidos:\n"
+                        + "    a: Muestra este mensaje de ayuda.\n"
+                        + "    ayuda: Muestra este mensaje de ayuda.\n"
+                        + "    e: Inicia el modo de edición de la aplicación.\n"
+                        + "    edit: Inicia el modo de edición de la aplicación.\n"
+                        + "    editar: Inicia el modo de edición de la aplicación.\n"
+                        + "    h: muestra este mensaje de ayuda.\n"
+                        + "    help: muestra este mensaje de ayuda.\n"
+                );   
             }
         } else{
             launch(args);
