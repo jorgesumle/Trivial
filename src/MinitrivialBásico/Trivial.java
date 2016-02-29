@@ -108,6 +108,17 @@ public class Trivial extends Application{
                                         System.out.println("Introduce una de las opciones disponibles.");
                                         break;
                                 }
+                                if(type == 1 || type == 2 || type == 3){
+                                    Question.appendQuestion();
+                                }
+                                /*Justo después de que se escriba la respuesta en el fichero.
+                                Así hay menos posibilidades de que se pierda información durante la escritura. El usuario no podrá crear
+                                inconsistencias deliberadamente, sino que tendrá que cerrar abruptamente el programa durante la operación
+                                de escritura, que sucede en milesimas de segundo. Así si se va la luz probablemente tampoco habrá problemas
+                                porque tiene que ser mucha coincidencia que se vaya justo en el instante preciso. Aun así, si se diera ese improbable
+                                caso y se escribiera en el fichero de preguntas y no en el de respuestas, ocasionalmente y dependiendo del tamaño
+                                de ambos ficheros se daría un fallo durante la partida de probabilidad de (1 / número de preguntas), que haría que no se pudiera
+                                continuar jugando.*/
                             } while(type != 5); 
                             break;
                         case 2:
@@ -131,20 +142,22 @@ public class Trivial extends Application{
                                 
                                 final String QUESTIONS_HEADER = "Pregunta";
                                 final String ANSWERS_HEADER = "Respuesta";
+                                final String CORRECT_ANSWER_HEADER = "Respuesta correcta";
                                 String[][] fields;
                                 String[] headers;
                                 byte minFieldLength[];
                                 
                                 final byte MIN_LENGTH_OF_ANSWER_FIELD = (byte)ANSWERS_HEADER.length();
                                 final byte MIN_LENGTH_OF_CODE_FIELD = 10;
-                                final byte MIN_LENGTH_OF_CATEGORY_FIELD = 21;
+                                final byte LENGTH_OF_CATEGORY_FIELD = 21;
                                 final byte MIN_LENGTH_OF_QUESTION_FIELD = (byte)QUESTIONS_HEADER.length();
+                                final byte LENGTH_OF_TYPE_OF_ANSWER = 17;
                                 //final String headers[]; Usalo cuando descubras por qué falla lo otro.
                                     //También para minFieldLength
                                 switch(query){ //En desarrollo.                             
                                     case 1: //    1) Ver todas las preguntas.
                                         headers = new String[]{"Código", "Categoría", "Pregunta"};
-                                        minFieldLength = new byte[]{MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD};
+                                        minFieldLength = new byte[]{MIN_LENGTH_OF_CODE_FIELD, LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD};
                                         fields = new String[questions.size()][minFieldLength.length];
                                         for(int i = 0; i < questions.size(); i++){
                                             for(int j = 0; j < minFieldLength.length; j++){
@@ -163,11 +176,56 @@ public class Trivial extends Application{
                                         }
                                         Query.showTable(headers, minFieldLength, fields);
                                         break;
-                                    case 2: Query.showAnswers(); break;
+                                    case 2: 
+                                        headers = new String[]{"Código", "Categoría", "Tipo de respuesta", "Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4", "Respuesta 5", "Respuesta correcta"};
+                                        minFieldLength = new byte[]{MIN_LENGTH_OF_CODE_FIELD, LENGTH_OF_CATEGORY_FIELD, LENGTH_OF_TYPE_OF_ANSWER, (byte)(MIN_LENGTH_OF_ANSWER_FIELD + 2), (byte)(MIN_LENGTH_OF_ANSWER_FIELD + 2), (byte)(MIN_LENGTH_OF_ANSWER_FIELD + 2), (byte)(MIN_LENGTH_OF_ANSWER_FIELD + 2), (byte)(MIN_LENGTH_OF_ANSWER_FIELD + 2), (byte)CORRECT_ANSWER_HEADER.length()};
+                                        fields = new String[answers.size()][minFieldLength.length];
+                                        for(int i = 0; i < answers.size(); i++){
+                                            for(int j = 0; j < minFieldLength.length; j++){
+                                                try{
+                                                    switch (j) {
+                                                        case 0:
+                                                            fields[i][j] = Integer.toString(answers.get(i).getCode());
+                                                            break;
+                                                        case 1:
+                                                            fields[i][j] = StringFormat.formatCategory(answers.get(i).getCategory()); 
+                                                            break;
+                                                        case 2:
+                                                            fields[i][j] = StringFormat.formatTypeOfAnswer(answers.get(i).TYPE_OF_ANSWER);
+                                                            break;
+                                                        case 3:
+                                                            fields[i][j] = StringFormat.removeSpacesAtTheBeggining(answers.get(i).getAnswer()); 
+                                                            //Mejora la apariencia de las preguntas del tipo sí-o-no.
+                                                            break;
+                                                        case 4:
+                                                            fields[i][j] = StringFormat.removeSpacesAtTheBeggining(((MultipleAnswer)(answers.get(i))).getAnswer2()); 
+                                                            break;
+                                                        case 5:
+                                                            fields[i][j] = StringFormat.removeSpacesAtTheBeggining(((MultipleAnswer)(answers.get(i))).getAnswer3()); 
+                                                            break;
+                                                        case 6:
+                                                            fields[i][j] = StringFormat.removeSpacesAtTheBeggining(((MultipleAnswer)(answers.get(i))).getAnswer4()); 
+                                                            break;
+                                                        case 7:
+                                                            fields[i][j] = StringFormat.removeSpacesAtTheBeggining(((MultipleAnswer)(answers.get(i))).getAnswer5()); 
+                                                            break;
+                                                        case 8:
+                                                            fields[i][j] = StringFormat.removeSpacesAtTheBeggining(MultipleAnswer.getAnswerByCorrectAnswer(((MultipleAnswer)(answers.get(i))).getCorrectAnswer(), (MultipleAnswer)answers.get(i))); 
+                                                            break;
+                                                    }
+                                                } catch(ClassCastException e){
+                                                    fields[i][j] = "";
+                                                }
+                                            }
+                                            
+                                        }
+                                        Query.showTable(headers, minFieldLength, fields);
+                                        //Query.showAnswers(); 
+                                        break;
                                     case 3:/*
                                         headers = new String[] {"Código", "Categoría", "Pregunta", "Respuesta"};
-                                        final ArrayList<SimpleAnswer> simpleAnswers = SimpleAnswer.getSimpleAnswers(answers);
-                                        final ArrayList<Question> simpleQuestions;
+                                        ArrayList<SimpleAnswer> simpleAnswers = SimpleAnswer.getSimpleAnswers(answers);
+                                        ArrayList<Question> simpleQuestions; //Aquí falta algo. <----------------------------------
                                         minFieldLength = new byte[]{MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD, MIN_LENGTH_OF_ANSWER_FIELD};
                                         fields = new String[questions.size()][minFieldLength.length];
                                         for(int i = 0; i < simpleAnswers.size(); i++){
@@ -302,7 +360,11 @@ public class Trivial extends Application{
                         + "    editar: Inicia el modo de edición de la aplicación.\n"
                         + "    h: muestra este mensaje de ayuda.\n"
                         + "    help: muestra este mensaje de ayuda.\n"
-                );   
+                );
+                System.exit(0);
+            } else{
+                System.out.println("No existe el parámetro " + args[0] + ". Introduce un parámetro válido,\n"
+                        + "como «ayuda», que muestra todos las opciones existentes (Trivial ayuda).");
             }
         } else{
             launch(args);
