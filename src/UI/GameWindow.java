@@ -24,6 +24,7 @@ import MinitrivialBásico.Trivial;
 import java.util.ArrayList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -35,8 +36,13 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
+
 
 /**
  *
@@ -52,35 +58,64 @@ public class GameWindow {
     private static short p1Points = 0;
     private static short p2Points = 0;
     private static Answer answer;
+    protected static BorderPane gameContainer = new BorderPane();
     
     private static Text questionText;
     public static void game(){
-        grid.setBackground(
+        gameContainer.setCenter(grid);
+        
+        HBox smallMenu = new HBox();
+        Button back = new Button("Volver el menú principal");
+        back.setOnAction(e -> GameMenus.createMenu());
+        Button exit = new Button("Salir");
+        exit.setOnAction(e -> System.exit(0));
+        
+        smallMenu.getChildren().addAll(back, exit);
+        gameContainer.setBottom(smallMenu);
+        
+        gameContainer.setBackground(
                     new Background(
                             new BackgroundImage(
-                                    new Image(UI.GameWindow.class.getResource("bubbleBackground3.png").toExternalForm()), 
+                                    new Image(UI.GameWindow.class.getResource("bubbleBackground.png").toExternalForm()), 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
+        
+        
         if(turn > 20 && p1Points != p2Points){
             playAgain();
             return;
         }
+        grid.getStyleClass().add("grid");
         grid.setAlignment(Pos.CENTER);
-        grid.setHgap(7);
-        grid.setVgap(11);
+        /*grid.setPrefSize(800, 800);
+        grid.setMaxSize(grid.getWidth(), grid.getHeight());*/
+        
+        
+
         
         grid.setOnMouseClicked(pass -> {});
         
         
         questions = Question.getQuestions();
+        if(questions.isEmpty()){
+            String errorMessage = "No existe ninguna pregunta ni respuesta. Debes crearlas para poder jugar al Trivial.\n"
+                    + "Para ello escribe en la consola «Trivial e». Entrarás al modo de edición.\n"
+                    + "Entonces selecciona la opción «Añadir una pregunta» (introduce «1»). Con esta opción\n"
+                    + "podrás crear preguntas y sus respectivas respuestas.\n";
+            grid.add(new Text(errorMessage), 0, 0);
+            Scene game = new Scene(grid, 700, 500);
+            Trivial.stage.setScene(grid.getScene());
+        }
         ArrayList<Answer> answers = Answer.getAnswers();
 
         randomQuestion = (int)(Math.random()*questions.size());
 
         question = StringFormat.removeSpacesAtTheBeggining(questions.get(randomQuestion).getQuestion());
-        String category = StringFormat.formatCategory(questions.get(randomQuestion).getCategory());
+        
+        byte categoryByte = questions.get(randomQuestion).getCategory();
+        String category = StringFormat.formatCategory(categoryByte);
         answer = answers.get(randomQuestion);
 
 
@@ -101,7 +136,13 @@ public class GameWindow {
         player2Points.setId("points");
         grid.setHalignment(player2Points, HPos.CENTER);
         
-
+        
+        if(turn % 2 == 0){
+            player2.setId("playing");
+        } else{
+            player1.setId("playing");
+        }
+        
         grid.add(player1, 0, 0);
         grid.add(player1Points, 0, 1);
 
@@ -117,6 +158,26 @@ public class GameWindow {
 
         
         Label categoryText = new Label(category);
+        switch(categoryByte){
+            case 1: 
+                categoryText.setId("Geografia");
+                break;
+            case 2:
+                categoryText.setId("Cine");
+                break;
+            case 3:
+                categoryText.setId("Historia");
+                break;
+            case 4: 
+                categoryText.setId("Arte");
+                break;
+            case 5:
+                categoryText.setId("Ciencias");
+                break;
+            case 6:
+                categoryText.setId("Deportes");
+                break;
+        }
         grid.setHalignment(categoryText, HPos.CENTER);
         grid.add(categoryText, 3, 2);
         
@@ -215,6 +276,10 @@ public class GameWindow {
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
+            if(GameMenus.isSoundOn){
+                MediaPlayer applause = new MediaPlayer(new Media(UI.GameWindow.class.getResource("applause.wav").toExternalForm()));
+                applause.play();
+            }
             if(turn % 2 == 1){
                 message = "¡Bien hecho, " + Trivial.player2Name + "! Acertaste la pregunta.";
                 p2Points++;
@@ -231,10 +296,13 @@ public class GameWindow {
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
-            
+            if(GameMenus.isSoundOn){
+                MediaPlayer failSound = new MediaPlayer(new Media(UI.GameWindow.class.getResource("fail.mp3").toExternalForm()));
+                failSound.play();
+            }
             if(answer.TYPE_OF_ANSWER == 3){
                 //sobreescribo la variable
-                correctAnswer = MinitrivialBásico.MultipleAnswer.getAnswerByCorrectAnswer(answer.TYPE_OF_ANSWER, (MinitrivialBásico.MultipleAnswer)(answer));
+                correctAnswer = MinitrivialBásico.MultipleAnswer.getAnswerByCorrectAnswer((MinitrivialBásico.MultipleAnswer)(answer));
             } 
             else if(answer.TYPE_OF_ANSWER == 2){
                 correctAnswer = "";
