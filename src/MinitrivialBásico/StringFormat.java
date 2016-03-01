@@ -68,7 +68,7 @@ public class StringFormat {
                     categoryString = "Geografía";
                     break;
                 case 2: 
-                    categoryString = "Espectáculos";
+                    categoryString = "Cine y espectáculos";
                     break;
                 case 3: 
                     categoryString = "Historia";
@@ -80,9 +80,24 @@ public class StringFormat {
                     categoryString = "Ciencias y naturaleza";
                     break;
                 case 6: 
-                    categoryString = "Deportes";
+                    categoryString = "Deportes y pasatiempos";
                     break;
         }
         return categoryString;
+    }
+    public static String formatTypeOfAnswer(byte type){
+        String typeStr = "";
+        switch(type){
+            case 1:
+                typeStr = "Simple";
+                break;
+            case 2: 
+                typeStr = "Del tipo sí-o-no";
+                break;
+            case 3: 
+                typeStr = "Múltiple";
+                break;
+        }
+        return typeStr;
     }
 }

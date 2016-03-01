@@ -3,7 +3,7 @@
  *
  * Este programa es software libre: usted puede redistruirlo y/o modificarlo
  * bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
- * la Free Software Foundation; ya sea la versión 2 de la Licencia, o
+ * la Free Software Foundation; ya sea la versión 3 de la Licencia, o
  * (a su elección) cualquier versión posterior.
  *
  * Este programa se distribuye con la intención de ser útil,
@@ -19,13 +19,19 @@ package UI;
 
 import MinitrivialBásico.Trivial;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 
 /**
  *
@@ -41,10 +47,9 @@ public class GameMenus {
         Scene menuScene = new Scene(menu, 300, 300);
         menuScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
         
-        Text title = new Text("TRIVIAL");
+        Text title = new Text("QUAESTIONES");
         title.setId("title");
         //menu.setHalignment(title, HPos.CENTER);
-        menu.setGridLinesVisible(true);
         
         Button play = new Button("Jugar");
         play.setId("playButton");
@@ -56,6 +61,7 @@ public class GameMenus {
         Button config = new Button("Configuración");
         config.setOnAction(e -> config());
         Button credits = new Button("Créditos");
+        credits.setOnAction(e -> credits());
         Button exit = new Button("Salir");
         exit.setOnAction(e -> System.exit(0));
         
@@ -130,19 +136,25 @@ public class GameMenus {
         VBox instructionsMenu = new VBox();
         instructionsMenu.setAlignment(Pos.CENTER);
         instructionsMenu.setSpacing(10);
+        
+        
         Text title = new Text("Instrucciones");
         title.setId("smallTitle");
         
-        Text instructions = new Text(
-                "Trivial es un videojuego para dos jugadores.\n"
-                + "Cada jugador tiene que responder a diez preguntas\n"
-                + "en turnos alternos y suma un punto por cada pregunta\n"
-                + "acertada. El ganador es el jugador que consiga más\n"
-                + "puntos al término de la ronda de diez preguntas.\n"
-                + "Si se produce un empate, en el turno 20, se\n"
-                + "seguirás haciendo preguntas hasta que algún jugador\n"
-                + "falle"
+        Text gameTitle = new Text("Quaestiones");
+        gameTitle.setStyle("-fx-font-style: italic;");
+        Text instructionsText = new Text(" es un videojuego para dos jugadores."
+                + "Cada jugador tiene que responder a diez preguntas "
+                + "en turnos alternos y suma un punto por cada pregunta "
+                + "acertada. El ganador es el jugador que consiga más "
+                + "puntos al término de la ronda de diez preguntas. "
+                + "Si se produce un empate, en el turno 20, se "
+                + "seguirás haciendo preguntas hasta que algún jugador falle."
         );
+        TextFlow instructions = new TextFlow(gameTitle, instructionsText);
+        instructions.setTextAlignment(TextAlignment.CENTER);
+        
+        instructionsMenu.setMargin(instructions, new Insets(6));
         
         Button back = new Button("Volver atrás");
         back.setOnAction(e -> GameMenus.createMenu());
@@ -153,5 +165,45 @@ public class GameMenus {
         Scene instructionsScene = new Scene(instructionsMenu, 300, 300);
         instructionsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
         Trivial.stage.setScene(instructionsScene);
+    }
+    public static void credits(){
+        VBox creditsMenu = new VBox();
+        creditsMenu.setAlignment(Pos.CENTER);
+        creditsMenu.setSpacing(10);
+        
+        Text title = new Text("Créditos");
+        title.setId("smallTitle");
+        
+        creditsMenu.setMargin(creditsMenu, new Insets(6));
+        
+        Text jorge = new Text("Jorge Maldonado Ventura (programación y diseño).\n\n");
+        
+        Text pai = new Text("'Pay' Pablo (diseño).\n\n");
+        
+        Text hand = new Text("http://freebie.photography/ (imagen de la mano).");
+        
+        TextFlow credits = new TextFlow(jorge, pai, hand);
+        credits.setTextAlignment(TextAlignment.CENTER);
+        
+        ImageView GPL = new ImageView(new Image(UI.GameWindow.class.getResource("GPL.jpg").toExternalForm()));
+        
+        Text copyrightFooter = new Text("Quaestiones © 2016 Jorge Maldonado Ventura.\n"
+            + "Este programa es software libre: usted puede redistruirlo y/o modificarlo "+
+            "bajo los términos de la Licencia Pública General GNU, tal y como está publicada por" +
+            " la Free Software Foundation; ya sea la versión 3 de la Licencia, o" +
+            " (a su elección) cualquier versión posterior."
+        );
+        TextFlow copyrightFter = new TextFlow(copyrightFooter);
+        copyrightFter.setTextAlignment(TextAlignment.CENTER);
+                
+        Button back = new Button("Volver atrás");
+        back.setOnAction(e -> GameMenus.createMenu());
+        
+        creditsMenu.getChildren().addAll(title, credits, GPL, copyrightFter, back);
+        
+        Scene creditsScene = new Scene(creditsMenu, 640, 520);
+        creditsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        Trivial.stage.setScene(creditsScene);
+        
     }
 }

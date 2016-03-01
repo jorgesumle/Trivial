@@ -46,13 +46,13 @@ public abstract class Answer{
         Query.printAnswerAndQuestionByCode(code);
         String modify = "";
         do {
-            modify = Input.input("Est\u00e1s seguro de que quieres modificar esta respuesta. Si" + "dices que si se borrar\u00e1 y deber\u00e1s introducir todos los datos" + "de la respuesta de nuevo.");
+            modify = Input.input("Estás seguro de que quieres modificar esta respuesta. Si dices que sí se borrará y deberás introducir todos los datos de la respuesta de nuevo.\n>>> ");
         } while (modify.charAt(0) != 'n' && modify.charAt(0) != 's');
         if (modify.charAt(0) == 'n') {
             return;
         }
         removeAnswer(code);
-        byte type = Input.byteInput("Cuando modificas una respuesta, puedes cambiar tambi\u00e9n su tipo.\n" + "Elige un tipo de respuesta:\n" + "    1) Simple.\n" + "    2) Del tipo si/no.\n" + "    3) De respuesta m\u00faltiple.\n" + ">>> ");
+        byte type = Input.byteInput("Cuando modificas una respuesta, puedes cambiar también su tipo.\n" + "Elige un tipo de respuesta:\n" + "    1) Simple.\n" + "    2) Del tipo si/no.\n" + "    3) De respuesta m\u00faltiple.\n" + ">>> ");
         switch (type) {
             case 1:
                 SimpleAnswer.addSimpleAnswer();
@@ -80,9 +80,9 @@ public abstract class Answer{
     }
 
     protected static void removeDeletedAnswers() {
-        ArrayList<Answer> answers = Answer.getAnswers();
+        ArrayList<Answer> answers = getAnswers();
         Answer.removeAnswersPermanently();
-        try (final RandomAccessFile raf = new RandomAccessFile(Question.questionsFile, "rw")) {
+        try (final RandomAccessFile raf = new RandomAccessFile(answersFile, "rw")) {
             for (int i = 0; i < answers.size(); i++) {
                 answers.get(i).answerWriter(raf);
             }
@@ -145,7 +145,7 @@ public abstract class Answer{
         ArrayList<Answer> answers = new ArrayList<>();
         File file = new File(answersFile);
         if (!file.exists()) {
-            return new ArrayList<Answer>();
+            return new ArrayList<>();
         }
         try (final RandomAccessFile raf = new RandomAccessFile(answersFile, "r")) {
             int i = 0;

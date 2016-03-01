@@ -17,7 +17,6 @@
 
 package MinitrivialBásico;
 
-import UI.EnterNames;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.image.Image;
@@ -36,7 +35,8 @@ public class Trivial extends Application{
     public static String player2Name;
     public static Stage stage;
     public static void start(){
-        EnterNames.enterNames();
+        UI.GameMenus.createMenu();
+        
         stage.setTitle("Trivial");
         stage.getIcons().add(new Image(UI.GameWindow.class.getResource("icon.png").toExternalForm()));
         stage.show();
@@ -210,7 +210,7 @@ public class Trivial extends Application{
                                                             fields[i][j] = StringFormat.removeSpacesAtTheBeggining(((MultipleAnswer)(answers.get(i))).getAnswer5()); 
                                                             break;
                                                         case 8:
-                                                            fields[i][j] = StringFormat.removeSpacesAtTheBeggining(MultipleAnswer.getAnswerByCorrectAnswer(((MultipleAnswer)(answers.get(i))).getCorrectAnswer(), (MultipleAnswer)answers.get(i))); 
+                                                            fields[i][j] = StringFormat.removeSpacesAtTheBeggining(MultipleAnswer.getAnswerByCorrectAnswer((MultipleAnswer)answers.get(i))); 
                                                             break;
                                                     }
                                                 } catch(ClassCastException e){

@@ -26,8 +26,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -43,10 +48,17 @@ public class EnterNames {
         Scene enterNames = new Scene(mainScreen, 300, 300);
         
         enterNames.getStylesheets().add(UI.GameWindow.class.getResource("namesSc.css").toExternalForm());
-
-        Text title = new Text("TRIVIAL");
-        title.setId("title");
-        mainScreen.setHalignment(title, HPos.CENTER);
+        mainScreen.setBackground(
+                    new Background(
+                            new BackgroundImage(                             //abstractBlueBackground
+                                    new Image(UI.GameWindow.class.getResource("abstractBlueBackground.png").toExternalForm()), 
+                                    BackgroundRepeat.NO_REPEAT, 
+                                    BackgroundRepeat.NO_REPEAT, 
+                                    BackgroundPosition.CENTER, 
+                                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true)
+                            )
+                    )
+        );
         
         Label playerLabel1 = new Label("Jugador 1");
         TextField player1 = new TextField();
@@ -54,10 +66,8 @@ public class EnterNames {
         TextField player2 = new TextField();
         Button play = new Button("Jugar");
         play.setId("playButton");
-        Button exit = new Button("Salir");
-        exit.setOnAction(e -> System.exit(0));
-        
-        mainScreen.add(title, 1, 1, 2, 1);
+        Button back = new Button("Volver atrás");
+        back.setOnAction(e -> GameMenus.createMenu());
         
         mainScreen.add(playerLabel1, 1, 2);
         mainScreen.add(player1, 2, 2);
@@ -66,8 +76,8 @@ public class EnterNames {
         
         mainScreen.add(play, 2, 4);
         mainScreen.setHalignment(play, HPos.CENTER);
-        mainScreen.add(exit, 2, 5);
-        mainScreen.setHalignment(exit, HPos.CENTER);
+        mainScreen.add(back, 2, 5);
+        mainScreen.setHalignment(back, HPos.CENTER);
         
         
         play.setOnAction(e -> 
@@ -86,14 +96,14 @@ public class EnterNames {
                 if(grid == null){ //La primera vez que se juega
                     grid = new GridPane();
                     GameWindow.game();
-                    game = new Scene(grid, 700, 500);
+                    game = new Scene(GameWindow.gameContainer, 800, 500);
                     game.getStylesheets().add(UI.GameWindow.class.getResource("gameSc.css").toExternalForm());
                     Trivial.stage.setScene(game);
                 }
                 else{ //Cuando ya se ha jugado una vez o más.
                     grid.getChildren().clear();
                     GameWindow.game();
-                    Trivial.stage.setScene(grid.getScene());
+                    Trivial.stage.setScene(GameWindow.gameContainer.getScene());
                 }
             }
         );

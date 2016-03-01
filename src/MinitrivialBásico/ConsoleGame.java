@@ -76,7 +76,7 @@ public class ConsoleGame {
                         answerInput = Input.byteInput(String.format("    1) %s%n    2) %s%n    3) %s%n    4) %s%n    5) %s%n", answerObj.answer, answerObj.answer2, answerObj.answer3, answerObj.answer4, answerObj.answer5));
                     } while(answerInput < 1 || answerInput > 5);
                     
-                    String answerStr = StringFormat.removeSpacesAtTheBeggining(MultipleAnswer.getAnswerByCorrectAnswer(answerObj.getCorrectAnswer(), answerObj));
+                    String answerStr = StringFormat.removeSpacesAtTheBeggining(MultipleAnswer.getAnswerByCorrectAnswer(answerObj));
                     
                     if(answerInput == answerObj.getCorrectAnswer()){
                         System.out.println("Acertaste.");

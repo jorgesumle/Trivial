@@ -97,11 +97,11 @@ public class Input {
     public static byte selectCategory() {
         byte option = 0;
         final String categories = "    1) Geografía.\n"
-                + "    2) Espectáculos.\n"
+                + "    2) Cine y espectáculos.\n"
                 + "    3) Historia.\n"
                 + "    4) Arte y Literatura.\n"
                 + "    5) Ciencias y Naturaleza.\n"
-                + "    6) Deportes.\n";
+                + "    6) Deportes y pasatiempos.\n";
         do{
             option = Input.byteInput("Elige una de las siguientes categorías: \n" + categories + ">>> ");
         } while(option < 1 || option > 6);

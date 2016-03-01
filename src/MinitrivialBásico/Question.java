@@ -60,13 +60,14 @@ public class Question {
         Query.printAnswerAndQuestionByCode(code);
         String modify = "";
         do {
-            modify = Input.input("Est\u00e1s seguro de que quieres modificar esta pregunta. Si " + "dices que si, se borrar\u00e1 y deber\u00e1s introducir todos los datos" + "de la pregunta de nuevo.\n>>> ");
+            modify = Input.input("Estás seguro de que quieres modificar esta pregunta. Si " + "dices que sí, se borrará y deberás introducir todos los datos" + "de la pregunta de nuevo.\n>>> ");
         } while (modify.charAt(0) != 'n' && modify.charAt(0) != 's');
         if (modify.charAt(0) == 'n') {
             return;
         }
         removeQuestion(code);
         Question.addQuestion();
+        Question.appendQuestion();
     }
 
     /**
@@ -115,7 +116,7 @@ public class Question {
         } catch (IOException ex) {
             Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.printf("La pregunta con el c\u00f3digo %d no existe.%n", code);
+        System.out.printf("La pregunta con el código %d no existe.%n", code);
     }
 
     public static ArrayList getQuestions() {
@@ -238,13 +239,21 @@ public class Question {
             codesUsed.add(questions.get(i).getCode());
         }
         while(codesUsed.contains(code)){
-            code = (int)(Math.random() * (Integer.MAX_VALUE)); //Número aleatorio entre 0 y 2147483647.
+            if(!(code >= Integer.MAX_VALUE)) //== también funcionaría.
+                code++;
+            else{
+                code = Integer.MIN_VALUE;
+            }
         }
+        
+        questionObj = new Question(code, question, Input.selectCategory());
+            
+    }
+    public static void appendQuestion(){
         try(RandomAccessFile questionRAF = new RandomAccessFile(questionsFile, "rw")){
             //Crea y escribe las preguntas
             long sizeOfQuestionsFile = questionRAF.length();
             questionRAF.seek(sizeOfQuestionsFile);
-            questionObj = new Question(code, question, Input.selectCategory());
             questionObj.writeQuestion(questionRAF);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
@@ -253,7 +262,6 @@ public class Question {
             Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
     /*public static void getSimpleQuestions(ArrayList<Question> questions){
         ArrayList<Question> simpleQuestions = new ArrayList<>();
         for(int i = 0; i < questions.size(); i++){

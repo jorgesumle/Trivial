@@ -3,7 +3,7 @@ Copyright (C) 2016 Jorge Maldonado Ventura
 
 Este programa es software libre: usted puede redistruirlo y/o modificarlo
 bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
-la Free Software Foundation; ya sea la versión 3 de la Licencia, o
+la Free Software Foundation; ya sea la versión 2 de la Licencia, o
 (a su elección) cualquier versión posterior.
 
 Este programa se distribuye con la intención de ser útil,
@@ -15,23 +15,23 @@ Usted debería haber recibido una copia de la Licencia Pública General GNU
 junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
 */
 /* 
-    Created on : 20-feb-2016, 16:29:57
+    Created on : 29-feb-2016, 6:54:38
     Author     : Jorge Maldonado Ventura 
+.vbox{
+    -fx-spacing: 120;
+    -fx-alignment: center;
+}
 */
+#title{
+   -fx-font-size: 32px;
+   -fx-font-family: "Arial Black";
+   -fx-fill: #818181;
+   -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
+}
 
-.label {
-    -fx-font-size: 17px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
-}
-.button{
-    -fx-text-fill: white;
-    -fx-font-family: "Arial Narrow";
-    -fx-font-weight: bold;
-    -fx-background-color: linear-gradient(#A1a2b1, #4A5058);
-    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
-}
-.button:hover {
-    -fx-background-color: linear-gradient(#4A5058, #A1a2b1);
+#smallTitle{
+   -fx-font-size: 28px;
+   -fx-font-family: "Verdana";
+   -fx-fill: #717171;
+   -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
 }

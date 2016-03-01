@@ -42,7 +42,7 @@ public class MultipleAnswer extends Answer{
         String answer5;
         byte correctAnswer = 0;
         do {
-            System.out.println("Primero debes introducir todas las posibles respuestas. " + "Despu\u00e9s tendr\u00e1s que especificar cu\u00e1l es la correcta");
+            System.out.println("Primero debes introducir todas las posibles respuestas. Después tendrás que especificar cuál es la correcta");
             answer = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la primera respuesta.\n>>> "));
             answer2 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la segunda respuesta.\n>>> "));
             answer3 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la tercera respuesta.\n>>> "));
@@ -144,10 +144,10 @@ public class MultipleAnswer extends Answer{
                 + "Categoría: " + StringFormat.formatCategory(category) + ".\n"
 //                + "Borrada: " + deleted + ".\n"
                 + "Respuesta 1: " + answer + ".\n"
-                + "Respuesta 2: " + answer2 + ".\n"
-                + "Respuesta 3: " + answer3 + ".\n"
-                + "Respuesta 4: " + answer4 + ".\n"
-                + "Respuesta 5: " + answer5 + ".\n"
+                + "Respuesta 2: " + StringFormat.removeSpacesAtTheBeggining(answer2) + ".\n"
+                + "Respuesta 3: " + StringFormat.removeSpacesAtTheBeggining(answer3) + ".\n"
+                + "Respuesta 4: " + StringFormat.removeSpacesAtTheBeggining(answer4) + ".\n"
+                + "Respuesta 5: " + StringFormat.removeSpacesAtTheBeggining(answer5) + ".\n"
                 + "Respuesta correcta: Respuesta " + correctAnswer + ".\n";  
     }
 
@@ -166,9 +166,9 @@ public class MultipleAnswer extends Answer{
     public String getAnswer5() {
         return answer5;
     }
-    public static String getAnswerByCorrectAnswer(byte correctAnswer, MultipleAnswer answerObj){
+    public static String getAnswerByCorrectAnswer(MultipleAnswer answerObj){
         String answerStr = "";
-        switch(correctAnswer){
+        switch(answerObj.getCorrectAnswer()){
             case 1: 
                 answerStr = answerObj.getAnswer();
                 break;

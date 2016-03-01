@@ -1,18 +1,18 @@
 /*
 Copyright (C) 2016 Jorge Maldonado Ventura
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+Este programa es software libre: usted puede redistruirlo y/o modificarlo
+bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
+la Free Software Foundation; ya sea la versión 3 de la Licencia, o
+(a su elección) cualquier versión posterior.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Este programa se distribuye con la intención de ser útil,
+pero SIN NINGUNA GARANTÍA; incluso sin la garantía implícita de
+USABILIDAD O UTILIDAD PARA UN FIN PARTICULAR. Vea la
+Licencia Pública General GNU para más detalles.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+Usted debería haber recibido una copia de la Licencia Pública General GNU
+junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
 */
 /* 
     Created on : 27-feb-2016, 16:49:49
@@ -21,9 +21,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .label{
     -fx-background-color : white;
 }
+.grid{
+    -fx-background-color: white;
+    -fx-hgap: 7;
+    -fx-vgap: 11;
+}
+
 #player{
     -fx-font: 16px Tahoma;
     -fx-stroke: gray;
+    -fx-stroke-width: 1;
+    -fx-font-weight: bold;
+}
+#playing{
+    -fx-font: 20px Tahoma;
+    -fx-stroke: #33e130;
     -fx-stroke-width: 1;
     -fx-font-weight: bold;
 }
@@ -40,4 +52,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -fx-font: 15px Colibri;
     -fx-stroke: #333323;
     -fx-stroke-width: 1;
+}
+
+
+
+/*Categorías*/
+#Geografia{
+    -fx-background-color: blueviolet;
+}
+#Cine{
+    -fx-background-color: pink;
+}
+#Historia{
+    -fx-background-color: yellow;
+}
+#Arte{
+    -fx-background-color: #bf304b;
+}
+#Ciencias{
+    -fx-background-color: green;
+}
+#Deportes{
+    -fx-background-color: #ee7838;
 }
