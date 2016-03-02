@@ -16,10 +16,10 @@
  */
 package UI;
 
-import MinitrivialBásico.Trivial;
-import static MinitrivialBásico.Trivial.grid;
-import static MinitrivialBásico.Trivial.player1Name;
-import static MinitrivialBásico.Trivial.player2Name;
+import Console.Quaestiones;
+import static Console.Quaestiones.grid;
+import static Console.Quaestiones.player1Name;
+import static Console.Quaestiones.player2Name;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -35,10 +35,16 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 
 /**
- *
+ * Todo lo relativo a la ventana en la que los jugadores deben introducir sus
+ * nombres antes de jugar.
  * @author Jorge Maldonado Ventura
  */
 public class EnterNames {
+    /**
+     * Crea la ventana en la que los jugadores deben introducir sus nombres. Si
+     * no lo desean, pueden dejar el área de texto en blanco. En este caso, se
+     * les asignará por defecto los nombres "Jugador 1" y "Jugador 2".
+     */
     public static void enterNames(){
         GridPane mainScreen = new GridPane();
         mainScreen.setAlignment(Pos.CENTER);
@@ -50,8 +56,8 @@ public class EnterNames {
         enterNames.getStylesheets().add(UI.GameWindow.class.getResource("namesSc.css").toExternalForm());
         mainScreen.setBackground(
                     new Background(
-                            new BackgroundImage(                             //abstractBlueBackground
-                                    new Image(UI.GameWindow.class.getResource("abstractBlueBackground.png").toExternalForm()), 
+                            new BackgroundImage(                             
+                                    new Image("abstractBlueBackground.png"), 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
@@ -96,17 +102,17 @@ public class EnterNames {
                 if(grid == null){ //La primera vez que se juega
                     grid = new GridPane();
                     GameWindow.game();
-                    game = new Scene(GameWindow.gameContainer, 800, 500);
+                    game = new Scene(grid, 800, 500);
                     game.getStylesheets().add(UI.GameWindow.class.getResource("gameSc.css").toExternalForm());
-                    Trivial.stage.setScene(game);
+                    Quaestiones.stage.setScene(game);
                 }
                 else{ //Cuando ya se ha jugado una vez o más.
                     grid.getChildren().clear();
                     GameWindow.game();
-                    Trivial.stage.setScene(GameWindow.gameContainer.getScene());
+                    Quaestiones.stage.setScene(GameWindow.grid.getScene());
                 }
             }
         );
-        Trivial.stage.setScene(enterNames);
+        Quaestiones.stage.setScene(enterNames);
     }
 }
