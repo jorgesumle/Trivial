@@ -18,7 +18,11 @@
 package UI;
 
 import Console.Quaestiones;
-import javafx.event.EventHandler;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -45,6 +49,11 @@ public class GameMenus {
      * otros submenús.
      */
     public static void createMenu(){
+         /*Si hay un error porque no existe aún el archivo de configuración, no importa; se usarán los valores predeterminados y el error
+        no lo verá el usuario. En cuanto se cambie una vez la configuración esto siempre cargará la configuración, aunque sea la misma que haya ya 
+        establecida.*/
+        loadConfig();
+        
         GridPane menu = new GridPane();
         menu.setAlignment(Pos.CENTER);
         menu.setVgap(20);
@@ -89,7 +98,7 @@ public class GameMenus {
         Quaestiones.stage.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e) -> {
             if(e.getCode().equals(KeyCode.ESCAPE)){
                 if(askBeforeClose){
-                    Alert.exitAlert("Quaestiones - ¿salir?", "¿Estás seguro de que quieres cerrar el programa?");
+                    Alert.exitAlert("Quaestiones - ¿salir?", "¿Estás seguro de que quieres cerrar el programa?", menu);
                 } else{
                     System.exit(0);
                 }
@@ -138,6 +147,7 @@ public class GameMenus {
                     sound.setText(SOUND_ON);
                     isSoundOn = true;
                 }
+                saveConfig();
             }
         );
         Label ASK_TO_CLOSE = new Label("Preguntar antes de cerrar el programa");
@@ -158,6 +168,7 @@ public class GameMenus {
                     askToClose.setText(ASK_BEFORE_CLOSE);
                     askBeforeClose = true;
                 }
+                saveConfig();
             }
         );
         
@@ -241,7 +252,7 @@ public class GameMenus {
         TextFlow credits = new TextFlow(jorge, hand);
         credits.setTextAlignment(TextAlignment.CENTER);
         
-        ImageView GPL = new ImageView(new Image("/GPL.jpg"));
+        ImageView GPL = new ImageView(new Image("/GPL.jpg", 100, 50, true, true));
         
         Text copyrightFooter = new Text("Quaestiones © 2016 Jorge Maldonado Ventura.\n"
             + "Este programa es software libre: usted puede redistruirlo y/o modificarlo "+
@@ -261,5 +272,28 @@ public class GameMenus {
         creditsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
         Quaestiones.stage.setScene(creditsScene);
         
+    }
+    final static String CONFIG_FILE = "config.ajustes";
+    private static void saveConfig() {
+        try(RandomAccessFile raf = new RandomAccessFile(CONFIG_FILE, "rw")){
+            raf.writeBoolean(isSoundOn);
+            raf.writeBoolean(askBeforeClose);
+        }
+        catch (FileNotFoundException ex) {
+            Logger.getLogger(GameMenus.class.getName()).log(Level.SEVERE, null, ex);
+        } catch(IOException ex){
+            Logger.getLogger(GameMenus.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private static void loadConfig(){
+        try(RandomAccessFile raf = new RandomAccessFile(CONFIG_FILE, "rw")){
+            isSoundOn = raf.readBoolean();
+            askBeforeClose = raf.readBoolean();
+        }
+        catch (FileNotFoundException ex) {
+            Logger.getLogger(GameMenus.class.getName()).log(Level.SEVERE, null, ex);
+        } catch(IOException ex){
+            Logger.getLogger(GameMenus.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
