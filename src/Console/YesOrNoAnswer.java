@@ -3,7 +3,7 @@
  *
  * Este programa es software libre: usted puede redistruirlo y/o modificarlo
  * bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
- * la Free Software Foundation; ya sea la versión 3 de la Licencia, o
+ * la Free Software Foundation; ya sea la versión 2 de la Licencia, o
  * (a su elección) cualquier versión posterior.
  *
  * Este programa se distribuye con la intención de ser útil,
@@ -15,11 +15,10 @@
  * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
  */
 
-package MinitrivialBásico;
+package Console;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,11 +26,22 @@ import java.util.logging.Logger;
  *
  * @author Jorge Maldonado Ventura 
  */
-public class SimpleAnswer extends Answer{
+public class YesOrNoAnswer extends Answer{
 
-    public static void addSimpleAnswer() {
-        String answer = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la respuesta.\n>>> "));
-        answerObj = new SimpleAnswer(Question.questionObj.getCode(), false, Question.questionObj.getCategory(), answer);
+    public static void addYesOrNoAnswer() {
+        String answer;
+        do {
+            answer = Input.input("\u00bfLa respuesta es 's\u00ed' o 'no' ('s' o 'n')?\n>>> ");
+            if (!(answer.equals("s\u00ed") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n"))) {
+                System.out.println("Las respuestas permitidas son 's\u00ed', 'no', 'si', 's' y 'n'. Prueba de  nuevo.");
+            }
+        } while (!(answer.equals("s\u00ed") || answer.equals("no") || answer.equals("si") || answer.equals("s") || answer.equals("n")));
+        if (answer.equals("s\u00ed") || answer.equals("si") || answer.equals("s")) {
+            answer = "s";
+        } else {
+            answer = "n";
+        }
+        answerObj = new YesOrNoAnswer(Question.questionObj.getCode(), false, Question.questionObj.getCategory(), answer);
         try (final RandomAccessFile raf = new RandomAccessFile(Answer.answersFile, "rw")) {
             long sizeOfAnswersFile = raf.length();
             raf.seek(sizeOfAnswersFile);
@@ -41,30 +51,35 @@ public class SimpleAnswer extends Answer{
         }
     }
     
-
-    public SimpleAnswer() {
+    /**
+     * Crea una una respuesta vacía: 
+     *     code = 0;
+     *     deleted = true;
+     *     category = 0;
+     *     answer = "";
+     */
+    public YesOrNoAnswer() {
         code = 0;
         deleted = true;
         category = 0;
         answer = "";
-        TYPE_OF_ANSWER = 1;
+        TYPE_OF_ANSWER = 2;
     }
     
-    public SimpleAnswer(int code, boolean deleted, byte category, String answer) {
+    public YesOrNoAnswer(int code, boolean deleted, byte category, String answer) {
         this.code = code;
         this.deleted = deleted;
         this.category = category;
         this.answer = answer;
-        TYPE_OF_ANSWER = 1;
+        TYPE_OF_ANSWER = 2;
     }
     /**
      * Escribe lee instancia de este objeto mediante el acceso directo.
      * @param raf contiene información sobre el fichero del que se va a leer
      * el objeto y la posición donde comenzará la lectura.
-     * @return true si la operación de lectura se ha realizado con éxito; false si no.
      */
     @Override
-    public boolean answerReader(RandomAccessFile raf) {
+    public void answerReader(RandomAccessFile raf) {
         try{
             code = raf.readInt();
             raf.readByte();
@@ -74,7 +89,6 @@ public class SimpleAnswer extends Answer{
         } catch (IOException ex) {
             Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return true;
     }
     /**
      * Escribe una instancia de este objeto mediante el acceso directo.
@@ -91,28 +105,16 @@ public class SimpleAnswer extends Answer{
             raf.writeUTF(answer);
         } catch (IOException ex) {
             Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }    
     }
 
     @Override
     public String toString() {
-        return "RESPUESTA SIMPLE\n"
+        return "RESPUESTA DEL TIPO SÍ-O-NO\n"
                 + "\n"
                 + "Código: " + code + ".\n"
                 + "Categoría: " + StringFormat.formatCategory(category) + ".\n"
 //                + "Borrada: " + deleted + ".\n"
-                + "Respuesta: " + answer + ".\n";        
-    }
-    /**
-     * Devuelve las re
-     */
-    public static ArrayList<SimpleAnswer> getSimpleAnswers(ArrayList<Answer> answers){
-        ArrayList<SimpleAnswer> simpleAnswers = new ArrayList<>();
-        for(int i = 0; i < answers.size(); i++){
-            if(answers.get(i).TYPE_OF_ANSWER == 1){
-                simpleAnswers.add((SimpleAnswer)answers.get(i));
-            }
-        }
-        return simpleAnswers;
+                + "Respuesta: " + answer + ".\n";
     }
 }

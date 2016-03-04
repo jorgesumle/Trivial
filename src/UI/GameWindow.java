@@ -21,6 +21,7 @@ import Console.Answer;
 import Console.Question;
 import Console.StringFormat;
 import Console.Quaestiones;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -81,7 +82,7 @@ public class GameWindow {
         grid.setBackground(
                     new Background(
                             new BackgroundImage(
-                                    new Image(UI.GameWindow.class.getResource("bubbleBackground.png").toExternalForm()), 
+                                    new Image("bubbleBackground.png"), 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
@@ -94,14 +95,6 @@ public class GameWindow {
         }
         grid.getStyleClass().add("grid");
         grid.setAlignment(Pos.CENTER);
-        /*grid.setPrefSize(800, 800);
-        grid.setMaxSize(grid.getWidth(), grid.getHeight());*/
-        
-        
-
-        
-        grid.setOnMouseClicked(pass -> {});
-        
         
         questions = Question.getQuestions();
         if(questions.isEmpty()){
@@ -277,13 +270,13 @@ public class GameWindow {
             grid.setBackground(
                     new Background(
                             new BackgroundImage(
-                                    new Image(UI.GameWindow.class.getResource("thumbsUpHD.jpg").toExternalForm()), 
+                                    new Image("thumbsUpHD.jpg"), 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
             if(GameMenus.isSoundOn){
-                MediaPlayer applause = new MediaPlayer(new Media(UI.GameWindow.class.getResource("applause.wav").toExternalForm()));
+                MediaPlayer applause = new MediaPlayer(new Media(Paths.get("src/applause.wav").toUri().toString()));
                 applause.play();
             }
             if(turn % 2 == 1){
@@ -297,13 +290,13 @@ public class GameWindow {
             grid.setBackground(
                     new Background(
                             new BackgroundImage(
-                                    new Image(UI.GameWindow.class.getResource("thumbsDownRedHD.jpg").toExternalForm()), 
+                                    new Image("thumbsDownRedHD.jpg"), 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundRepeat.NO_REPEAT, 
                                     BackgroundPosition.CENTER, 
                                     new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
             if(GameMenus.isSoundOn){
-                MediaPlayer failSound = new MediaPlayer(new Media(UI.GameWindow.class.getResource("fail.mp3").toExternalForm()));
+                MediaPlayer failSound = new MediaPlayer(new Media(Paths.get("src/fail.mp3").toUri().toString()));
                 failSound.play();
             }
             if(answer.TYPE_OF_ANSWER == 3){
@@ -358,22 +351,23 @@ public class GameWindow {
     private static void playAgain(){
         grid.getChildren().clear();
         Text winner = new Text("El ganador es " + getWinner() + ".");
+        winner.setStyle("-fx-font-size: 16px;");
 
         
         Label playAgain = new Label("¿Queréis jugar una nueva partida?");
         Button yes = new Button("Sí");
         Button no = new Button("No");
         
-        grid.add(winner, 0, 0, 2, 1);
+        grid.add(winner, 0, 0);
         grid.setHalignment(winner, HPos.CENTER);
-        grid.setGridLinesVisible(true);
-        grid.add(playAgain, 1, 1, 2, 1);
+        
+        grid.add(playAgain, 0, 1, 2, 1);
         grid.setHalignment(playAgain, HPos.CENTER);
         //Sí
-        grid.add(yes, 1, 2);
+        grid.add(yes, 0, 2);
         grid.setHalignment(yes, HPos.CENTER);
         //\\No
-        grid.add(no, 2, 2);
+        grid.add(no, 1, 2);
         grid.setHalignment(no, HPos.CENTER);
         //\\
         yes.setOnAction(e -> 

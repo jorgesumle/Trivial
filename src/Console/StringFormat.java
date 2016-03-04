@@ -14,7 +14,7 @@
  * Usted debería haber recibido una copia de la Licencia Pública General GNU
  * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
  */
-package MinitrivialBásico;
+package Console;
 
 /**
  *

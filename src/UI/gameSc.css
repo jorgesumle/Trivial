@@ -22,7 +22,6 @@ junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
     -fx-background-color : white;
 }
 .grid{
-    -fx-background-color: white;
     -fx-hgap: 7;
     -fx-vgap: 11;
 }

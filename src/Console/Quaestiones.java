@@ -15,7 +15,7 @@
  * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
  */
 
-package MinitrivialBásico;
+package Console;
 
 import java.util.ArrayList;
 import javafx.application.Application;
@@ -24,12 +24,11 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 /**
- * Trivial (videojuego). Las preguntas tienen
- * una longitud máxima de 120 carácteres; las respuestas tienen una longitud máxima
- * de 30. El programa utiliza dos ficheros de datos: preguntas.dat y respuestas.dat.
+ * <i>Quaestiones</i> es un videojuego multijugador de preguntas y respuestas. 
+ * Cuenta con un modo de edición para consola.
  * @author Jorge Maldonado Ventura 
  */
-public class Trivial extends Application{
+public class Quaestiones extends Application{
     public static GridPane grid;
     public static String player1Name;
     public static String player2Name;
@@ -37,8 +36,8 @@ public class Trivial extends Application{
     public static void start(){
         UI.GameMenus.createMenu();
         
-        stage.setTitle("Trivial");
-        stage.getIcons().add(new Image(UI.GameWindow.class.getResource("icon.png").toExternalForm()));
+        stage.setTitle("Quaestiones");
+        stage.getIcons().add(new Image("icon.png"));
         stage.show();
     }
     @Override

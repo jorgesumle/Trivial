@@ -17,7 +17,8 @@
 
 package UI;
 
-import MinitrivialBásico.Trivial;
+import Console.Quaestiones;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,18 +27,23 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 
 /**
- *
+ * Todo lo relativo a los menús del juego.
  * @author Jorge Maldonado Ventura 
  */
 public class GameMenus {
+    /**
+     * Crea el menú principal del juego. Desde aquí se puede acceder al juego y a 
+     * otros submenús.
+     */
     public static void createMenu(){
         GridPane menu = new GridPane();
         menu.setAlignment(Pos.CENTER);
@@ -77,11 +83,32 @@ public class GameMenus {
         menu.setHalignment(credits, HPos.CENTER);
         menu.add(exit, 0, 6);
         menu.setHalignment(exit, HPos.CENTER);
+
+        Quaestiones.stage.setScene(menuScene);
         
-        
-        Trivial.stage.setScene(menuScene);
+        Quaestiones.stage.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e) -> {
+            if(e.getCode().equals(KeyCode.ESCAPE)){
+                if(askBeforeClose){
+                    Alert.exitAlert("Quaestiones - ¿salir?", "¿Estás seguro de que quieres cerrar el programa?");
+                } else{
+                    System.exit(0);
+                }
+            }
+        });
     }
+    /**
+     * El estado de los sonidos del juego. Con <i>true</i> están activados; con false desactivados.
+     */
     protected static boolean isSoundOn = true;
+    /**
+     * El requerimiento de confirmación. Si es <i>true</i>, se pedirá una confirmación al usuario
+     * antes de cerrar el programa. En caso contrario, se cerrará directamente.
+     */
+    protected static boolean askBeforeClose = false;
+    /**
+     * Carga el menú de configuración del juego, desde donde se pueden activar y
+     * desactivar los sonidos
+     */
     private static void config(){
         GridPane configMenu = new GridPane();
         configMenu.setAlignment(Pos.CENTER);
@@ -90,10 +117,9 @@ public class GameMenus {
         Scene configScene = new Scene(configMenu, 300, 300);
         configScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
 
-        
         Text title = new Text("Configuración");
         title.setId("smallTitle");
-        Label soundLabel = new Label("Efectos"); 
+        final Label SOUND_LABEL = new Label("Sonidos"); 
         Button sound;
         final String SOUND_ON = "Activados";
         final String SOUND_OFF = "Desactivados";
@@ -114,6 +140,28 @@ public class GameMenus {
                 }
             }
         );
+        Label ASK_TO_CLOSE = new Label("Preguntar antes de cerrar el programa");
+        final String ASK_BEFORE_CLOSE = "Sí";
+        final String DO_NOT_ASK_BEFORE_CLOSE = "No";
+        Button askToClose;
+        if(askBeforeClose){
+            askToClose = new Button(ASK_BEFORE_CLOSE);
+        } else{
+            askToClose = new Button(DO_NOT_ASK_BEFORE_CLOSE);
+        }
+        askToClose.setOnAction(e ->
+            {
+                if(askBeforeClose){
+                    askToClose.setText(DO_NOT_ASK_BEFORE_CLOSE);
+                    askBeforeClose = false;
+                } else{
+                    askToClose.setText(ASK_BEFORE_CLOSE);
+                    askBeforeClose = true;
+                }
+            }
+        );
+        
+        
         
         Button back = new Button("Volver atrás");
         back.setOnAction(e -> GameMenus.createMenu());
@@ -121,17 +169,23 @@ public class GameMenus {
         
         configMenu.add(title, 0, 0, 2, 1);
         
-        configMenu.add(soundLabel, 0, 2);
-        configMenu.setHalignment(soundLabel, HPos.CENTER);
+        configMenu.add(SOUND_LABEL, 0, 2);
+        configMenu.setHalignment(SOUND_LABEL, HPos.CENTER);
         configMenu.add(sound, 1, 2);
         configMenu.setHalignment(sound, HPos.CENTER);
-        configMenu.add(back, 0, 3, 2, 1);
+        configMenu.add(ASK_TO_CLOSE, 0, 3);
+        configMenu.setHalignment(ASK_TO_CLOSE, HPos.CENTER);
+        configMenu.add(askToClose, 1, 3);
+        configMenu.setHalignment(askToClose, HPos.CENTER);
+        configMenu.add(back, 0, 4, 2, 1);
         configMenu.setHalignment(back, HPos.CENTER);
         
         
-        Trivial.stage.setScene(configScene);
+        Quaestiones.stage.setScene(configScene);
     }
-
+    /**
+     * Crea una ventana con las instrucciones del juego.
+     */
     private static void instructions() {
         VBox instructionsMenu = new VBox();
         instructionsMenu.setAlignment(Pos.CENTER);
@@ -164,8 +218,11 @@ public class GameMenus {
         
         Scene instructionsScene = new Scene(instructionsMenu, 300, 300);
         instructionsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
-        Trivial.stage.setScene(instructionsScene);
+        Quaestiones.stage.setScene(instructionsScene);
     }
+    /**
+     * Crea una ventana con los créditos.
+     */
     public static void credits(){
         VBox creditsMenu = new VBox();
         creditsMenu.setAlignment(Pos.CENTER);
@@ -178,14 +235,13 @@ public class GameMenus {
         
         Text jorge = new Text("Jorge Maldonado Ventura (programación y diseño).\n\n");
         
-        Text pai = new Text("'Pay' Pablo (diseño).\n\n");
         
         Text hand = new Text("http://freebie.photography/ (imagen de la mano).");
         
-        TextFlow credits = new TextFlow(jorge, pai, hand);
+        TextFlow credits = new TextFlow(jorge, hand);
         credits.setTextAlignment(TextAlignment.CENTER);
         
-        ImageView GPL = new ImageView(new Image(UI.GameWindow.class.getResource("GPL.jpg").toExternalForm()));
+        ImageView GPL = new ImageView(new Image("/GPL.jpg"));
         
         Text copyrightFooter = new Text("Quaestiones © 2016 Jorge Maldonado Ventura.\n"
             + "Este programa es software libre: usted puede redistruirlo y/o modificarlo "+
@@ -203,7 +259,7 @@ public class GameMenus {
         
         Scene creditsScene = new Scene(creditsMenu, 640, 520);
         creditsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
-        Trivial.stage.setScene(creditsScene);
+        Quaestiones.stage.setScene(creditsScene);
         
     }
 }

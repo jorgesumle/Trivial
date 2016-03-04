@@ -15,7 +15,7 @@
  * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
  */
 
-package MinitrivialBásico;
+package Console;
 
 import java.io.BufferedWriter;
 import java.io.File;

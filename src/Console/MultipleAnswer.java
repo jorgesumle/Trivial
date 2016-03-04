@@ -15,7 +15,7 @@
  * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
  */
 
-package MinitrivialBásico;
+package Console;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -90,10 +90,9 @@ public class MultipleAnswer extends Answer{
      * Escribe lee instancia de este objeto mediante el acceso directo.
      * @param raf contiene información sobre el fichero del que se va a leer
      * el objeto y la posición donde comenzará la lectura.
-     * @return true si la operación de lectura se ha realizado con éxito; false si no.
      */
     @Override
-    public boolean answerReader(RandomAccessFile raf) {
+    public void answerReader(RandomAccessFile raf) {
         try{
             code = raf.readInt();
             raf.readByte();
@@ -108,7 +107,6 @@ public class MultipleAnswer extends Answer{
         } catch (IOException ex) {
             Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return true;
     }
     public byte getCorrectAnswer() {
         return correctAnswer;

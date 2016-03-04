@@ -15,12 +15,12 @@
  * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
  */
 
-package MinitrivialBásico;
+package Console;
 
 import java.util.ArrayList;
 
 /**
- *
+ * Permite probar si el programa funciona correctamente jugando en la consola.
  * @author Jorge Maldonado Ventura 
  */
 public class ConsoleGame {
