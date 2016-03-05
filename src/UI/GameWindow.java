@@ -52,7 +52,7 @@ public class GameWindow {
     private static int randomQuestion;
     private static String question;
     private static ArrayList<Question> questions;
-    protected static GridPane grid = Quaestiones.grid;
+    protected static GridPane grid = EnterNames.grid;
     private static short turn = 1;
     private static short p1Points = 0;
     private static short p2Points = 0;
@@ -68,7 +68,8 @@ public class GameWindow {
      * en el área de texto).
      */
     public static void game(){
-        /*gameContainer.setCenter(grid);
+        /* Quizá sirva...
+        gameContainer.setCenter(grid);
         
         VBox smallMenu = new VBox();
         Button back = new Button("Volver el menú principal");
@@ -107,18 +108,74 @@ public class GameWindow {
             Quaestiones.stage.setScene(grid.getScene());
         }
         ArrayList<Answer> answers = Answer.getAnswers();
-
-        randomQuestion = (int)(Math.random()*questions.size());
-
-        question = StringFormat.removeSpacesAtTheBeggining(questions.get(randomQuestion).getQuestion());
         
-        byte categoryByte = questions.get(randomQuestion).getCategory();
+        ArrayList<Answer> answersCat1 = new ArrayList<>();
+        ArrayList<Answer> answersCat2 = new ArrayList<>();
+        ArrayList<Answer> answersCat3 = new ArrayList<>();
+        ArrayList<Answer> answersCat4 = new ArrayList<>();
+        ArrayList<Answer> answersCat5 = new ArrayList<>();
+        ArrayList<Answer> answersCat6 = new ArrayList<>();
+        
+        byte randomCategory = (byte)(Math.random() * 6 + 1);
+        Question questionObj = null;
+        int randomAnswer;
+        switch(randomCategory){ 
+            case 1: 
+                answersCat1 = Console.Answer.getCategoryNAnswers((byte)1, answers);
+                randomAnswer = (int) (Math.random() * answersCat1.size());
+                answer = answersCat1.get(randomAnswer);
+                questionObj = Question.getQuestionByCode(answer.getCode());
+                question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
+                break;
+            case 2: 
+                answersCat2 = Console.Answer.getCategoryNAnswers((byte)2, answers);
+                randomAnswer = (int) (Math.random() * answersCat2.size());
+                answer = answersCat2.get(randomAnswer);
+                questionObj = Question.getQuestionByCode(answer.getCode());
+                question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
+                break;
+            case 3: 
+                answersCat3 = Console.Answer.getCategoryNAnswers((byte)3, answers);
+                randomAnswer = (int) (Math.random() * answersCat3.size());
+                answer = answersCat3.get(randomAnswer);
+                questionObj = Question.getQuestionByCode(answer.getCode());
+                question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
+                break;
+            case 4: 
+                answersCat4 = Console.Answer.getCategoryNAnswers((byte)4, answers);
+                randomAnswer = (int) (Math.random() * answersCat4.size());
+                answer = answersCat4.get(randomAnswer);
+                questionObj = Question.getQuestionByCode(answer.getCode());
+                question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
+                break;
+            case 5: 
+                answersCat5 = Console.Answer.getCategoryNAnswers((byte)5, answers);
+                randomAnswer = (int) (Math.random() * answersCat5.size());
+                answer = answersCat5.get(randomAnswer);
+                questionObj = Question.getQuestionByCode(answer.getCode());
+                question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
+                break;
+            case 6: 
+                answersCat6 = Console.Answer.getCategoryNAnswers((byte)6, answers);
+                randomAnswer = (int) (Math.random() * answersCat6.size());
+                answer = answersCat6.get(randomAnswer);
+                questionObj = Question.getQuestionByCode(answer.getCode());
+                question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
+                break;
+        }
+        
+        
+        //randomQuestion = (int)(Math.random()*questions.size());
+
+        //question = StringFormat.removeSpacesAtTheBeggining(questions.get(randomQuestion).getQuestion());
+        
+        byte categoryByte = questionObj.getCategory();
         String category = StringFormat.formatCategory(categoryByte);
-        answer = answers.get(randomQuestion);
+        //answer = answers.get(randomQuestion);
 
 
         //Jugadores, puntos, turno
-        Text player1 = new Text(Quaestiones.player1Name);
+        Text player1 = new Text(EnterNames.player1Name);
         player1.setId("player");
         Text player1Points = new Text(Short.toString(p1Points)/* + " puntos"*/);
         player1Points.setId("points");
@@ -128,7 +185,7 @@ public class GameWindow {
         numQuestion.setId("points");
         grid.setHalignment(numQuestion, HPos.CENTER);
 
-        Text player2 = new Text(Quaestiones.player2Name);
+        Text player2 = new Text(EnterNames.player2Name);
         player2.setId("player");
         Text player2Points = new Text(Short.toString(p2Points)/* + " puntos"*/);
         player2Points.setId("points");
@@ -280,10 +337,10 @@ public class GameWindow {
                 applause.play();
             }
             if(turn % 2 == 1){
-                message = "¡Bien hecho, " + Quaestiones.player2Name + "! Acertaste la pregunta.";
+                message = "¡Bien hecho, " + EnterNames.player2Name + "! Acertaste la pregunta.";
                 p2Points++;
             } else{
-                message = "¡Bien hecho, " + Quaestiones.player1Name + "! Acertaste la pregunta.";
+                message = "¡Bien hecho, " + EnterNames.player1Name + "! Acertaste la pregunta.";
                 p1Points++;
             }
         } else{
@@ -308,9 +365,9 @@ public class GameWindow {
             }
             
             if(turn % 2 == 1){
-                message = "¡Qué pena, " + Quaestiones.player2Name + "! Fallaste la pregunta.";
+                message = "¡Qué pena, " + EnterNames.player2Name + "! Fallaste la pregunta.";
             } else{
-                message = "¡Qué pena, " + Quaestiones.player1Name + "! Fallaste la pregunta.";
+                message = "¡Qué pena, " + EnterNames.player1Name + "! Fallaste la pregunta.";
             }
             if(!correctAnswer.equals("")){
                 message += " La respuesta correcta es «" + StringFormat.removeSpacesAtTheBeggining(correctAnswer) + "».";
@@ -391,9 +448,9 @@ public class GameWindow {
     private static String getWinner(){
         String winner; 
         if(p1Points > p2Points){
-            winner = Quaestiones.player1Name;
+            winner = EnterNames.player1Name;
         } else if(p2Points > p1Points){
-            winner = Quaestiones.player2Name;
+            winner = EnterNames.player2Name;
         } else{ //Nunca debería ocurrir esto.
             winner = "ninguno";
         }
