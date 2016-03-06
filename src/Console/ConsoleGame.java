@@ -38,11 +38,12 @@ public class ConsoleGame {
         
         Query.showQuestion(questions.get(randomQuestion));
         
+        
         switch (answers.get(randomQuestion).TYPE_OF_ANSWER) {
             case 1:
                 {
                     String answer = StringFormat.removeSpacesAtTheBeggining(answers.get(randomQuestion).getAnswer());
-                    String answerInput = Input.input("");
+                    String answerInput = Input.input(">>> ");
                     if(answer.toLowerCase().equals(answerInput.toLowerCase())){
                         System.out.println("Correcto.");
                     } else{
@@ -55,7 +56,7 @@ public class ConsoleGame {
                     String answerInput;
                     String answerStr;
                     do{
-                        answerInput = Input.input("    1) Sí\n    2) No\n").toLowerCase(); //A minúscula para compararlo más fácilmente.
+                        answerInput = Input.input("    1) Sí\n    2) No\n>>> ").toLowerCase(); //A minúscula para compararlo más fácilmente.
                     } while(!(answerInput.equals("1") || answerInput.equals("2") || answerInput.equals("si") || answerInput.equals("no") || answerInput.equals("sí")));
                     if(answerInput.equals("1") || answerInput.equals("si") || answerInput.equals("sí")){
                         answerStr = "s";
@@ -73,7 +74,7 @@ public class ConsoleGame {
                     byte answerInput;
                     do{
                         //Lista las preguntas, pide un número por teclado y lo asigna a answerInput.
-                        answerInput = Input.byteInput(String.format("    1) %s%n    2) %s%n    3) %s%n    4) %s%n    5) %s%n", answerObj.answer, answerObj.answer2, answerObj.answer3, answerObj.answer4, answerObj.answer5));
+                        answerInput = Input.byteInput(String.format("    1) %s%n    2) %s%n    3) %s%n    4) %s%n    5) %s%n>>> ", StringFormat.removeSpacesAtTheBeggining(answerObj.answer), StringFormat.removeSpacesAtTheBeggining(answerObj.answer2), StringFormat.removeSpacesAtTheBeggining(answerObj.answer3), StringFormat.removeSpacesAtTheBeggining(answerObj.answer4), StringFormat.removeSpacesAtTheBeggining(answerObj.answer5)));
                     } while(answerInput < 1 || answerInput > 5);
                     
                     String answerStr = StringFormat.removeSpacesAtTheBeggining(MultipleAnswer.getAnswerByCorrectAnswer(answerObj));
