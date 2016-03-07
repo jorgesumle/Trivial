@@ -27,8 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La clase Answer representa las respuestas de un videojuego de preguntas y 
- * respuestas. Cada respuesta tiene una longitud fija de 30 caracteres. Esta clase
+ * La clase Answer representa las respuestas del videojuego. 
+ * Cada respuesta tiene una longitud fija de 30 caracteres. Esta clase
  * también contiene métodos para la escritura, modificación, lectura y el borrado
  * de respuestas.
  * @author Jorge Maldonado Ventura 
@@ -46,6 +46,9 @@ public abstract class Answer{
      * Estado de la respuesta. Su valor es <i>true</i> si está borrada; <i>false</i> si no.
      */
     public boolean deleted;
+    /**
+     * La respuesta. Tiene una longitud máxima de 30 caracteres.
+     */
     public String answer;
     /**
      * Es el tipo de respuesta. Si su valor es 1, es una respuesta simple; si su valor es 2, es 
@@ -61,9 +64,9 @@ public abstract class Answer{
      */
     protected static Answer answerObj;
     /**
-     * la ruta en la que se guardan las respuestas cuando así se indica.
+     * La ruta en la que se guardan las respuestas cuando así se indica.
      */
-    protected final static String answersFile = "respuestas.dat";
+    protected final static String answersFile = "src/respuestas.dat";
     /**
      * Permite modificar todos los atributos de una respuesta del fichero de respuestas indicada mediante su código.
      * @param code el código de la respuesta que se quiere modificar
@@ -110,7 +113,7 @@ public abstract class Answer{
     protected static void removeDeletedAnswers() {
         ArrayList<Answer> answers = getAnswers();
         Answer.removeAnswersPermanently();
-        try (final RandomAccessFile raf = new RandomAccessFile(answersFile, "rw")) {
+        try (RandomAccessFile raf = new RandomAccessFile(answersFile, "rw")) {
             for (int i = 0; i < answers.size(); i++) {
                 answers.get(i).answerWriter(raf);
             }
@@ -126,7 +129,7 @@ public abstract class Answer{
      * @param code código de la respuesta.
      */
     protected static void removeAnswer(int code) {
-        try (final RandomAccessFile raf = new RandomAccessFile(answersFile, "rw")) {
+        try (RandomAccessFile raf = new RandomAccessFile(answersFile, "rw")) {
             int i = 0;
             int readCode = 0;
             byte answerType = 0;
@@ -234,23 +237,38 @@ public abstract class Answer{
     public abstract void answerWriter(RandomAccessFile raf);
     @Override
     public abstract String toString();
-
+    /**
+     * Obtiene el código de la respuesta.
+     * @return el código de la respuesta.
+     */
     public int getCode() {
         return code;
     }
-
+    /**
+     * Obtiene la categoría de la respuesta.
+     * @return la categoría de la respuesta.
+     */
     public byte getCategory() {
         return category;
     }
-
+    /**
+     * Obtiene la respuesta.
+     * @return la respuesta.
+     */
     public String getAnswer() {
         return answer;
     }
-
+    /**
+     * Obtiene el estado de la respuesta. Puede estar borrada, <i>true</i>, o no borrada, <i>false</i>.
+     * @return 
+     */
     public boolean isDeleted() {
         return deleted;
     }
-
+    /**
+     * Asigna una respuesta a este objeto.
+     * @param answer la respuesta que se quiere asignar.
+     */
     public void setAnswer(String answer) {
         this.answer = answer;
     }
@@ -272,5 +290,15 @@ public abstract class Answer{
             Logger.getLogger(Answer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return type;
+    }
+    
+    public static ArrayList<Answer> getCategoryNAnswers(byte category, ArrayList<Answer> answers){
+        ArrayList<Answer> answersCatN = new ArrayList<Answer>();
+        for(int i = 0; i < answers.size(); i++){
+            if(answers.get(i).getCategory() == category){
+                answersCatN.add(answers.get(i));
+            }  
+        }
+        return answersCatN;
     }
 }

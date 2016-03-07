@@ -32,6 +32,13 @@ junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
     -fx-background-color: linear-gradient(#A1a2b1, #4A5058);
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
-.button:hover {
+.button:hover{
+    -fx-text-fill: #e9f0e9;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(#A1a2b1, #4A5058);
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+.button:pressed {
     -fx-background-color: linear-gradient(#4A5058, #A1a2b1);
 }

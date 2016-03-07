@@ -20,57 +20,64 @@ package UI;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- *
+ * Se encarga de crear cuadros de diálogo personalizados.
  * @author Jorge Maldonado Ventura 
  */
-public class Alert {
-    /*
-     * Muestra un mensaje de confirmación de que se quiere cerrar la ventana y
-     * además difumina el contenido de la ventana contenedora. No está correctamente
-     * implementado aún
+public class MyAlerts {
+    /**
+     * Muestra un mensaje de confirmación que oregunta al usuario si quiere cerrar la ventana y
+     * además difumina el contenido de la ventana contenedora.
      * @param title el título que aparece en la ventana.
      * @param message el mensaje de confirmación
      * @param aPane el panel sobre el que se aplica el difuminado.
      */
-    /*
     public static void exitAlert(String title, String message, Pane aPane){ 
-        BoxBlur blur = new BoxBlur(aPane.getWidth() / 64, aPane.getHeight() / 64, 1);
-        aPane.setEffect(blur);
-        
         Stage window = new Stage();
+        window.setOnCloseRequest(e -> 
+            {   
+                window.close();
+                aPane.setEffect(null);
+            }
+        );
         
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle(title);
         window.setMinWidth(250);
         
+        Button closeButton = new Button("Sí");
+        closeButton.setMinWidth(125);
+        Button stayButton = new Button("No");
+        stayButton.setMinWidth(125);
+        
+        HBox buttons = new HBox();
+        buttons.setSpacing(5);
+        buttons.getChildren().addAll(closeButton, stayButton);
+        
+        
         
                     
         Label label = new Label(message);
-        Button closeButton = new Button("Sí");
         
-        Button stayButton = new Button("No");
         
         
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         
-        grid.add(label, 0, 0, 2, 1);
+        grid.add(label, 0, 0);
         grid.setHalignment(label, HPos.CENTER);
         
-        grid.add(closeButton, 0, 1);
-        grid.setHalignment(closeButton, HPos.CENTER);
-        
-        grid.add(stayButton, 1, 1);
-        grid.setHalignment(stayButton, HPos.CENTER);
+        grid.add(buttons, 0, 1);
         
         stayButton.setOnAction(e -> 
             {
@@ -86,7 +93,15 @@ public class Alert {
         window.setScene(scene);
         window.showAndWait();
     }
-    */
+    /**
+     * Muestra una ventana informativa simple con el mensaje que queramos
+     * @param message el mensaje que muestra la ventana de alerta.
+     */
+    public static void infoAlert(String message){
+        Alert warning = new Alert(AlertType.INFORMATION, message);
+        warning.showAndWait();
+    }
+    /*
     public static void exitAlert(String title, String message){
         Stage window = new Stage();
         
@@ -129,5 +144,5 @@ public class Alert {
         window.setScene(scene);
         window.showAndWait();
     }
-    
+    */
 }

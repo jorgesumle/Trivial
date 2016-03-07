@@ -17,21 +17,12 @@
 package UI;
 
 import Console.Quaestiones;
-import static Console.Quaestiones.grid;
-import static Console.Quaestiones.player1Name;
-import static Console.Quaestiones.player2Name;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -41,30 +32,40 @@ import javafx.scene.layout.GridPane;
  */
 public class EnterNames {
     /**
+     * El panel que se usa en el juego
+     */
+    public static GridPane grid;
+    /**
+     * El nombre del jugador 1. Si el usuario no especifica un nombre y clica en
+     * jugar se le asignará el nombre «Jugador 1».
+     */
+    public static String player1Name;
+    /**
+     * El nombre del jugador 2. Si el usuario no especifica un nombre y clica en
+     * jugar se le asignará el nombre «Jugador 2».
+     */
+    public static String player2Name;
+    /**
+     * La ventana donde se desarrolla la partida.
+     */
+    public static Scene game;
+    /**
      * Crea la ventana en la que los jugadores deben introducir sus nombres. Si
      * no lo desean, pueden dejar el área de texto en blanco. En este caso, se
      * les asignará por defecto los nombres "Jugador 1" y "Jugador 2".
      */
     public static void enterNames(){
         GridPane mainScreen = new GridPane();
+        GameMenus.currentPane = mainScreen;
+        
         mainScreen.setAlignment(Pos.CENTER);
         mainScreen.setVgap(25);
         mainScreen.setHgap(5);
 
-        Scene enterNames = new Scene(mainScreen, 300, 300);
+        Scene enterNames = new Scene(mainScreen, GameMenus.WIDTH, GameMenus.HEIGHT);
         
         enterNames.getStylesheets().add(UI.GameWindow.class.getResource("namesSc.css").toExternalForm());
-        mainScreen.setBackground(
-                    new Background(
-                            new BackgroundImage(                             
-                                    new Image("abstractBlueBackground.png"), 
-                                    BackgroundRepeat.NO_REPEAT, 
-                                    BackgroundRepeat.NO_REPEAT, 
-                                    BackgroundPosition.CENTER, 
-                                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true)
-                            )
-                    )
-        );
+        BackgroundStyle.setResizableBackground(mainScreen, "abstractBlueBackground.png");
         
         Label playerLabel1 = new Label("Jugador 1");
         TextField player1 = new TextField();
@@ -98,11 +99,13 @@ public class EnterNames {
                 } else{
                     player2Name = player2.getText();
                 }
-                Scene game = null;
+                
                 if(grid == null){ //La primera vez que se juega
                     grid = new GridPane();
+                    GameMenus.currentPane = grid;
+                    game = new Scene(grid, GameMenus.WIDTH, GameMenus.HEIGHT);
                     GameWindow.game();
-                    game = new Scene(grid, 800, 500);
+                    
                     game.getStylesheets().add(UI.GameWindow.class.getResource("gameSc.css").toExternalForm());
                     Quaestiones.stage.setScene(game);
                 }

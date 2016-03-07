@@ -17,10 +17,17 @@
 package Console;
 
 /**
- *
+ * Contiene recursos para darle estilo a cadenas de caracteres.
  * @author Jorge Maldonado Ventura
  */
 public class StringFormat {
+    /**
+     * Centra una cadena. Si se especifiica una longitud menor a la del texto,
+     * se perderá información al devolverlo centrado.
+     * @param text el texto que se quiere centrar.
+     * @param len el espacio para centrar ese texto
+     * @return el texto centrado.
+     */
     public static String center(String text, int len){
         String out = String.format("%"+len+"s%s%"+len+"s", "",text,"");
         float mid = (out.length()/2);
@@ -37,7 +44,7 @@ public class StringFormat {
      */
     public static String removeSpacesAtTheBeggining(String text){
         String newText = "";
-        for(byte i = 0; i < text.length(); i++){
+        for(short i = 0; i < text.length(); i++){
             if(!(text.charAt(i) == ' ')){
                 newText = text.substring(i);
                 break;
@@ -60,7 +67,14 @@ public class StringFormat {
         }
         return newString;
     }
-    
+    /**
+     * Asigna a cada número del uno al seis una categoría. El 1 es para
+     * Geografía; el 2, para Cine y espectáculos; el 3, para Historia; el 4, 
+     * para Arte y literatura; el 5, para Ciencias y naturaleza; y el 6, para
+     * Deportes y pasatiempos.
+     * @param categoryCode el número que representa una categoría.
+     * @return el nombre de la categoría seleccionada.
+     */
     public static String formatCategory(byte categoryCode){
         String categoryString = "";
         switch(categoryCode){
@@ -85,6 +99,13 @@ public class StringFormat {
         }
         return categoryString;
     }
+    /**
+     * Asigna a cada número del uno al tres un tipo de respuesta. El 1 corresponde
+     * a una respuesta simple; el 2, a una del tipo sí-o-no; y el 3, a una respuesta
+     * múltiple.
+     * @param type el número que representa a una respuesta.
+     * @return el nombre del tipo de respuesta seleccionado.
+     */
     public static String formatTypeOfAnswer(byte type){
         String typeStr = "";
         switch(type){
@@ -100,4 +121,12 @@ public class StringFormat {
         }
         return typeStr;
     }
+    /*Para cuando implemente el acceso directo
+    public static String adjustSpace(String palabra, int space) {
+        byte[] bytes = palabra.getBytes();
+        int realSpace = bytes.length - palabra.length() ;
+        space = space - realSpace;
+        String s = "%"+ space +"s";
+        return s;
+    }*/
 }

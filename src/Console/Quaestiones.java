@@ -20,18 +20,19 @@ package Console;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 /**
  * <i>Quaestiones</i> es un videojuego multijugador de preguntas y respuestas. 
  * Cuenta con un modo de edición para consola.
+ * <p>En <i>Quaestiones</i> debes responder a diez preguntas en turnos alternos
+ * con tu contrincante. Se suma un punto por cada pregunta acertada. El ganador
+ * es el jugador que consiga más puntos al término de la ronda de diez preguntas.
+ * Si se produce un empate en el turno 20, se seguirán haciendo preguntas hasta
+ * que algún jugador falle.
  * @author Jorge Maldonado Ventura 
  */
 public class Quaestiones extends Application{
-    public static GridPane grid;
-    public static String player1Name;
-    public static String player2Name;
     public static Stage stage;
     public static void start(){
         UI.GameMenus.createMenu();
@@ -50,12 +51,6 @@ public class Quaestiones extends Application{
      */
     public static void main(String[] args) {
         if(args.length > 0){
-            //LISTA DE PARÁMETROS (acepta minúsculas y mayúsculas)
-                /*
-                e
-                edit
-                editar
-                */
             String parameter = args[0].toLowerCase();
             if(parameter.equals("editar") || parameter.equals("e") || parameter.equals("edit")){ //Creación y edición de preguntas y respuestas para el trivial.
                 final String menu = "    1. Añadir una pregunta.\n"
@@ -120,7 +115,7 @@ public class Quaestiones extends Application{
                                 continuar jugando.*/
                             } while(type != 5); 
                             break;
-                        case 2:
+                        case 2: //Consultar datos
                             byte query = 0;
                             ArrayList<Question> questions = Question.getQuestions();
                             ArrayList<Answer> answers = Answer.getAnswers();
@@ -133,11 +128,7 @@ public class Quaestiones extends Application{
                                 query = Input.byteInput("Elige una opción:\n"
                                         + "    1) Ver todas las preguntas.\n"
                                         + "    2) Ver todas las respuestas.\n"
-                                        + "    3) Ver todas las preguntas y respuestas simples.\n"
-                                        + "    4) Ver todas las preguntas y respuestas de sí o no.\n"
-                                        + "    5) Ver todas las preguntas y respuestas múltiples.\n"
-                                        + "    6) Ver todas las preguntas y respuestas.\n"
-                                        + "    7) Volver al menú anterior.\n>>> ");
+                                        + "    3) Volver al menú anterior.\n>>> ");
                                 
                                 final String QUESTIONS_HEADER = "Pregunta";
                                 final String ANSWERS_HEADER = "Respuesta";
@@ -151,9 +142,8 @@ public class Quaestiones extends Application{
                                 final byte LENGTH_OF_CATEGORY_FIELD = 21;
                                 final byte MIN_LENGTH_OF_QUESTION_FIELD = (byte)QUESTIONS_HEADER.length();
                                 final byte LENGTH_OF_TYPE_OF_ANSWER = 17;
-                                //final String headers[]; Usalo cuando descubras por qué falla lo otro.
-                                    //También para minFieldLength
-                                switch(query){ //En desarrollo.                             
+
+                                switch(query){                      
                                     case 1: //    1) Ver todas las preguntas.
                                         headers = new String[]{"Código", "Categoría", "Pregunta"};
                                         minFieldLength = new byte[]{MIN_LENGTH_OF_CODE_FIELD, LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD};
@@ -216,48 +206,17 @@ public class Quaestiones extends Application{
                                                     fields[i][j] = "";
                                                 }
                                             }
-                                            
                                         }
                                         Query.showTable(headers, minFieldLength, fields);
                                         //Query.showAnswers(); 
                                         break;
-                                    case 3:/*
-                                        headers = new String[] {"Código", "Categoría", "Pregunta", "Respuesta"};
-                                        ArrayList<SimpleAnswer> simpleAnswers = SimpleAnswer.getSimpleAnswers(answers);
-                                        ArrayList<Question> simpleQuestions; //Aquí falta algo. <----------------------------------
-                                        minFieldLength = new byte[]{MIN_LENGTH_OF_CODE_FIELD, MIN_LENGTH_OF_CATEGORY_FIELD, MIN_LENGTH_OF_QUESTION_FIELD, MIN_LENGTH_OF_ANSWER_FIELD};
-                                        fields = new String[questions.size()][minFieldLength.length];
-                                        for(int i = 0; i < simpleAnswers.size(); i++){
-                                            for(int j = 0; j < minFieldLength.length; j++){
-                                                switch(j){
-                                                    case 0: 
-                                                        fields[i][j] = Integer.toString(questions.get(i).getCode()); 
-                                                        break;
-                                                    case 1: 
-                                                        fields[i][j] = StringFormat.formatCategory(questions.get(i).getCategory()); 
-                                                        break;
-                                                    case 2: 
-                                                        fields[i][j] = StringFormat.removeSpacesAtTheBeggining(questions.get(i).getQuestion()); 
-                                                        break;
-                                                    case 3:
-                                                        fields[i][j] = StringFormat.removeSpacesAtTheBeggining(simpleAnswers.get(i).getAnswer());
-                                                        break;
-                                                }
-                                            }
-                                        }*/
-                                        //Query.showTable(headers, minFieldLength, fields);
-                                        Query.showSimpleQuestionsAndAnswers(); 
-                                        break;
-                                    case 4: Query.showYesOrNoQuestions(); break;
-                                    case 5: break;
-                                    case 6: break;
-                                    case 7: break;
+                                    case 3: break;
                                     default: System.out.println("No has introducido una opción válida.");
                                 }     
-                            } while(query != 7);
+                            } while(query != 3);
 
                             break;
-                        case 3:
+                        case 3: //Buscar datos
                             byte search = 0;
                             do{
                                 search = Input.byteInput("Elige una opción:\n"
@@ -284,8 +243,9 @@ public class Quaestiones extends Application{
                             do{
                                 toModify = Input.byteInput("Elige una opción:\n    1) Modificar una pregunta y su respuesta.\n"
                                         + "    2) Modificar una pregunta.\n"
-                                        + "    3) Modificar una respuesta.\n");
-                            } while(toModify > 3 || toModify < 1);
+                                        + "    3) Modificar una respuesta.\n"
+                                        + "    4) Volver al menú anterior.\n>>> ");
+                            } while(toModify > 4 || toModify < 1);
                             switch(toModify){
                                 case 1:
                                     int code = Input.intInput("Introduce el código de la pregunta y la respuesta que quieres modificar\n>>> ");
@@ -297,7 +257,7 @@ public class Quaestiones extends Application{
                                     break;
                                 case 3:
                                     Answer.modifyAnswer(Input.intInput("Introduce el código de la respuesta que quieres modificar\n>>> "));
-                                    break;                                    
+                                    break;                              
                             }
                             break;
                         case 5:
@@ -364,6 +324,7 @@ public class Quaestiones extends Application{
             } else{
                 System.out.println("No existe el parámetro " + args[0] + ". Introduce un parámetro válido,\n"
                         + "como «ayuda», que muestra todos las opciones existentes (Trivial ayuda).");
+                System.exit(0);
             }
         } else{
             launch(args);

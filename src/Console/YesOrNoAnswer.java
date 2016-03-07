@@ -23,11 +23,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Respuesta del tipo sí-o-no.
  * @author Jorge Maldonado Ventura 
  */
 public class YesOrNoAnswer extends Answer{
-
+    /**
+     * Escribe una respuesta del tipo sí-o-no al final del fichero de respuestas.
+     */
     public static void addYesOrNoAnswer() {
         String answer;
         do {
@@ -65,7 +67,13 @@ public class YesOrNoAnswer extends Answer{
         answer = "";
         TYPE_OF_ANSWER = 2;
     }
-    
+    /**
+     * Crea una respuesta del tipo sí-o-no.
+     * @param code el código de la respuesta.
+     * @param deleted el estado de la respuesta.
+     * @param category la categoría de la respuesta.
+     * @param answer la respuesta.
+     */
     public YesOrNoAnswer(int code, boolean deleted, byte category, String answer) {
         this.code = code;
         this.deleted = deleted;
@@ -107,7 +115,11 @@ public class YesOrNoAnswer extends Answer{
             Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
         }    
     }
-
+    /**
+     * La representación del objeto del tipo de respuesta del tipo sí-o-no con
+     * cada atributo en una línea y una cabecera que pone el tipo de respuesta.
+     * @return la representación del objeto YesOrNoAnswer.
+     */
     @Override
     public String toString() {
         return "RESPUESTA DEL TIPO SÍ-O-NO\n"

@@ -23,7 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Respuesta de tipo múltiple. Existen cinco opciones y solo una respuesta correcta. Las
+ * opciones no pueden tener más de 30 caracteres. Esta clase también contiene métodos para
+ * añadir una respuesta de tipo múltiple al fichero de respuestas, para escritura y para lectura de objetos de tipo
+ * MultipleAnswer.
  * @author Jorge Maldonado Ventura 
  */
 public class MultipleAnswer extends Answer{
@@ -32,7 +35,9 @@ public class MultipleAnswer extends Answer{
     String answer4;
     String answer5;
     byte correctAnswer;
-    
+    /**
+     * Escribe una respuesta múltiple al final del fichero de respuestas.
+     */
     public static void addMultipleAnswer() {
         boolean validData = false;
         String answer;
@@ -48,9 +53,9 @@ public class MultipleAnswer extends Answer{
             answer3 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la tercera respuesta.\n>>> "));
             answer4 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la cuarta respuesta.\n>>> "));
             answer5 = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la quinta respuesta.\n>>> "));
-            String again = Input.input(String.format("Estas son las preguntas que has introducido:%n" + "    1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%nPara continuar pulsa 'Enter'. Escribe 'n' si has cometido alg\u00fan error y " + "quieres introducir de nuevo las respuestas. " + "%n>>> ", answer, answer2, answer3, answer4, answer5));
+            String again = Input.input(String.format("Estas son las preguntas que has introducido:%n" + "    1) %s%n    2) %s%n    3) %s%n    4) %s%n    5) %s%nPara continuar pulsa 'Enter'. Escribe 'n' si has cometido algún error y quieres introducir de nuevo las respuestas. " + "%n>>> ", StringFormat.removeSpacesAtTheBeggining(answer), StringFormat.removeSpacesAtTheBeggining(answer2), StringFormat.removeSpacesAtTheBeggining(answer3), StringFormat.removeSpacesAtTheBeggining(answer4), StringFormat.removeSpacesAtTheBeggining(answer5)));
             if (!again.equals("n")) {
-                correctAnswer = Input.byteInput(String.format("\u00bfCu\u00e1l de las respuestas que has introducido es la correcta?%n" + "    1)%s%n    2)%s%n    3)%s%n    4)%s%n    5)%s%n>>> ", answer, answer2, answer3, answer4, answer5));
+                correctAnswer = Input.byteInput(String.format("\u00bfCu\u00e1l de las respuestas que has introducido es la correcta?%n" + "    1) %s%n    2) %s%n    3) %s%n    4) %s%n    5) %s%n>>> ", StringFormat.removeSpacesAtTheBeggining(answer), StringFormat.removeSpacesAtTheBeggining(answer2), StringFormat.removeSpacesAtTheBeggining(answer3), StringFormat.removeSpacesAtTheBeggining(answer4), StringFormat.removeSpacesAtTheBeggining(answer5)));
                 validData = true;
             }
         } while (!validData);
@@ -64,7 +69,9 @@ public class MultipleAnswer extends Answer{
         }
     }
     
-    
+    /**
+     * Crea una respuesta de tipo múltiple predeterminada.
+     */
     public MultipleAnswer() {
         code = -1;
         deleted = true;
@@ -73,7 +80,18 @@ public class MultipleAnswer extends Answer{
         correctAnswer = -1;
         TYPE_OF_ANSWER = 3;
     }
-
+    /**
+     * Crea una respuesta de tipo múltiple.
+     * @param code el código de respuesta.
+     * @param deleted el estado de la respuesta.
+     * @param category la categoría de la respuesta.
+     * @param answer la primera opción.
+     * @param answer2 la segunda opción.
+     * @param answer3 la tercera opción.
+     * @param answer4 la cuarta opción.
+     * @param answer5 la quinta opción.
+     * @param correctAnswer el número que se refiere a la opción correcta.
+     */
     public MultipleAnswer(int code, boolean deleted, byte category, String answer, String answer2, String answer3, String answer4, String answer5, byte correctAnswer) {
         this.code = code;
         this.deleted = deleted;
@@ -87,7 +105,7 @@ public class MultipleAnswer extends Answer{
         TYPE_OF_ANSWER = 3;
     }
     /**
-     * Escribe lee instancia de este objeto mediante el acceso directo.
+     * Escribe lee instancia de este objeto mediante el acceso secuencial.
      * @param raf contiene información sobre el fichero del que se va a leer
      * el objeto y la posición donde comenzará la lectura.
      */
@@ -108,6 +126,10 @@ public class MultipleAnswer extends Answer{
             Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     * Devuelve el número que representa la respuesta correcta.
+     * @return la respuesta correcta.
+     */
     public byte getCorrectAnswer() {
         return correctAnswer;
     }
@@ -133,7 +155,11 @@ public class MultipleAnswer extends Answer{
             Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
         }  
     }
-
+    /**
+     * La representación del objeto del tipo de respuesta múltiple con
+     * cada atributo en una línea y una cabecera que pone el tipo de respuesta.
+     * @return la representación del objeto MultipleAnswer.
+     */
     @Override
     public String toString() {
         return "RESPUESTA MÚLTIPLE\n"
@@ -148,22 +174,41 @@ public class MultipleAnswer extends Answer{
                 + "Respuesta 5: " + StringFormat.removeSpacesAtTheBeggining(answer5) + ".\n"
                 + "Respuesta correcta: Respuesta " + correctAnswer + ".\n";  
     }
-
+    /**
+     * Obtiene la segunda opción.
+     * @return la segunda opción.
+     */
     public String getAnswer2() {
         return answer2;
     }
-
+    /**
+     * Obtiene la tercera opción.
+     * @return la tercera opción.
+     */
     public String getAnswer3() {
         return answer3;
     }
-
+    /**
+     * Obtiene la cuarta opción.
+     * @return la cuarta opción.
+     */
     public String getAnswer4() {
         return answer4;
     }
-
+    /**
+     * Obtiene la quinta opción.
+     * @return la quinta opción.
+     */
     public String getAnswer5() {
         return answer5;
     }
+    /**
+     * Obtiene una representación alfanumérica del objeto MultipleAnswer pasado
+     * como parámetro.
+     * @param answerObj el objeto alfanumérico que se quiere representar.
+     * @return la representación alfanumérica del objeto MultipleAnswer pasado como
+     * parámetro.
+     */
     public static String getAnswerByCorrectAnswer(MultipleAnswer answerObj){
         String answerStr = "";
         switch(answerObj.getCorrectAnswer()){

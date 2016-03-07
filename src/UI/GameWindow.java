@@ -24,23 +24,24 @@ import Console.Quaestiones;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 
 
 /**
@@ -48,15 +49,64 @@ import javafx.scene.text.Text;
  * @author DAW15
  */
 public class GameWindow {
-    private static TextArea input;
-    private static int randomQuestion;
     private static String question;
     private static ArrayList<Question> questions;
+    /**
+     * El panel donde se ubican los elementos del juego.
+     */
     protected static GridPane grid = EnterNames.grid;
     private static short turn = 1;
     private static short p1Points = 0;
     private static short p2Points = 0;
     private static Answer answer;
+    /**
+     * Las preguntas que se usarán en durante la partida.
+     */
+    protected static ArrayList<Answer> answers = Answer.getAnswers();
+    /**
+     * Las preguntas de la categoría 1 que ya han sido usadas durante la partida. Cuando acaba una partida, se vuelve
+     * a dejar vacío este arreglo.
+     */
+    protected static ArrayList<Answer> answersCat1 = Console.Answer.getCategoryNAnswers((byte)1, answers);
+    /**
+     * Las preguntas de la categoría 2 que ya han sido usadas durante la partida. Cuando acaba una partida, se vuelve
+     * a dejar vacío este arreglo.
+     */
+    protected static ArrayList<Answer> answersCat2 = Console.Answer.getCategoryNAnswers((byte)2, answers);
+    /**
+     * Las preguntas de la categoría 3 que ya han sido usadas durante la partida. Cuando acaba una partida, se vuelve
+     * a dejar vacío este arreglo.
+     */
+    protected static ArrayList<Answer> answersCat3 = Console.Answer.getCategoryNAnswers((byte)3, answers);
+    /**
+     * Las preguntas de la categoría 4 que ya han sido usadas durante la partida. Cuando acaba una partida, se vuelve
+     * a dejar vacío este arreglo.
+     */
+    protected static ArrayList<Answer> answersCat4 = Console.Answer.getCategoryNAnswers((byte)4, answers);
+    /**
+     * Las preguntas de la categoría 5 que ya han sido usadas durante la partida. Cuando acaba una partida, se vuelve
+     * a dejar vacío este arreglo.
+     */
+    protected static ArrayList<Answer> answersCat5 = Console.Answer.getCategoryNAnswers((byte)5, answers);
+    /**
+     * Las preguntas de la categoría 6 que ya han sido usadas durante la partida. Cuando acaba una partida, se vuelve
+     * a dejar vacío este arreglo.
+     */
+    protected static ArrayList<Answer> answersCat6 = Console.Answer.getCategoryNAnswers((byte)6, answers);
+    
+    private static int answersCat1Size = answersCat1.size();
+    private static int answersCat2Size = answersCat2.size();
+    private static int answersCat3Size = answersCat3.size();
+    private static int answersCat4Size = answersCat4.size();
+    private static int answersCat5Size = answersCat5.size();
+    private static int answersCat6Size = answersCat6.size();
+    
+    private static ArrayList<Integer> used1Answers = new ArrayList<>();
+    private static ArrayList<Integer> used2Answers = new ArrayList<>();
+    private static ArrayList<Integer> used3Answers = new ArrayList<>();
+    private static ArrayList<Integer> used4Answers = new ArrayList<>();
+    private static ArrayList<Integer> used5Answers = new ArrayList<>();
+    private static ArrayList<Integer> used6Answers = new ArrayList<>();
     
     
     private static Text questionText;
@@ -68,6 +118,8 @@ public class GameWindow {
      * en el área de texto).
      */
     public static void game(){
+        EnterNames.game.setOnKeyPressed(null);
+        grid.setOnMouseClicked(null);
         /* Quizá sirva...
         gameContainer.setCenter(grid);
         
@@ -79,16 +131,9 @@ public class GameWindow {
         
         smallMenu.getChildren().addAll(back, exit);
         gameContainer.setBottom(smallMenu);*/
-        
-        grid.setBackground(
-                    new Background(
-                            new BackgroundImage(
-                                    new Image("bubbleBackground.png"), 
-                                    BackgroundRepeat.NO_REPEAT, 
-                                    BackgroundRepeat.NO_REPEAT, 
-                                    BackgroundPosition.CENTER, 
-                                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
-        
+        grid.setHgap(2);
+        grid.setVgap(5);
+        BackgroundStyle.setResizableBackground(grid, "bubbleBackground.png");
         
         if(turn > 20 && p1Points != p2Points){
             playAgain();
@@ -99,65 +144,105 @@ public class GameWindow {
         
         questions = Question.getQuestions();
         if(questions.isEmpty()){
-            String errorMessage = "No existe ninguna pregunta ni respuesta. Debes crearlas para poder jugar al Trivial.\n"
+            Text errorMessage = new Text("No existe ninguna pregunta ni respuesta. Debes crearlas para poder jugar al Trivial.\n"
                     + "Para ello escribe en la consola «Trivial e». Entrarás al modo de edición.\n"
                     + "Entonces selecciona la opción «Añadir una pregunta» (introduce «1»). Con esta opción\n"
-                    + "podrás crear preguntas y sus respectivas respuestas.\n";
-            grid.add(new Text(errorMessage), 0, 0);
-            Scene game = new Scene(grid, 700, 500);
+                    + "podrás crear preguntas y sus respectivas respuestas.\n");
+            grid.add(new TextFlow(errorMessage), 0, 0);
+            Scene game = new Scene(grid, GameMenus.WIDTH, GameMenus.HEIGHT);
             Quaestiones.stage.setScene(grid.getScene());
         }
-        ArrayList<Answer> answers = Answer.getAnswers();
         
-        ArrayList<Answer> answersCat1 = new ArrayList<>();
-        ArrayList<Answer> answersCat2 = new ArrayList<>();
-        ArrayList<Answer> answersCat3 = new ArrayList<>();
-        ArrayList<Answer> answersCat4 = new ArrayList<>();
-        ArrayList<Answer> answersCat5 = new ArrayList<>();
-        ArrayList<Answer> answersCat6 = new ArrayList<>();
+        
+        
         
         byte randomCategory = (byte)(Math.random() * 6 + 1);
         Question questionObj = null;
         int randomAnswer;
+        
+        
+        int counter;
         switch(randomCategory){ 
-            case 1: 
-                answersCat1 = Console.Answer.getCategoryNAnswers((byte)1, answers);
-                randomAnswer = (int) (Math.random() * answersCat1.size());
+            case 1:
+                counter = 0;
+                do{
+                    counter++;
+                    randomAnswer = (int) (Math.random() * answersCat1Size);
+                    if(counter > 10) break; //Por si ya se han usado todas las respuestas de esta categoría.
+                }
+                while(used1Answers.contains(randomAnswer));
+                used1Answers.add(randomAnswer);
+                
                 answer = answersCat1.get(randomAnswer);
                 questionObj = Question.getQuestionByCode(answer.getCode());
                 question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
                 break;
             case 2: 
-                answersCat2 = Console.Answer.getCategoryNAnswers((byte)2, answers);
-                randomAnswer = (int) (Math.random() * answersCat2.size());
+                counter = 0;
+                do{
+                    counter++;
+                    randomAnswer = (int) (Math.random() * answersCat2Size);
+                    if(counter > 10) break; //Por si ya se han usado todas las respuestas de esta categoría.
+                }
+                while(used2Answers.contains(randomAnswer));
+                used2Answers.add(randomAnswer);
+                                
                 answer = answersCat2.get(randomAnswer);
                 questionObj = Question.getQuestionByCode(answer.getCode());
                 question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
                 break;
-            case 3: 
-                answersCat3 = Console.Answer.getCategoryNAnswers((byte)3, answers);
-                randomAnswer = (int) (Math.random() * answersCat3.size());
+            case 3:
+                counter = 0;
+                do{
+                    counter++;
+                    randomAnswer = (int) (Math.random() * answersCat3Size);
+                    if(counter > 10) break; //Por si ya se han usado todas las respuestas de esta categoría.
+                }
+                while(used3Answers.contains(randomAnswer));
+                used3Answers.add(randomAnswer);
+                
                 answer = answersCat3.get(randomAnswer);
                 questionObj = Question.getQuestionByCode(answer.getCode());
                 question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
                 break;
-            case 4: 
-                answersCat4 = Console.Answer.getCategoryNAnswers((byte)4, answers);
-                randomAnswer = (int) (Math.random() * answersCat4.size());
+            case 4:
+                counter = 0;
+                do{
+                    counter++;
+                    randomAnswer = (int) (Math.random() * answersCat4Size);
+                    if(counter > 10) break; //Por si ya se han usado todas las respuestas de esta categoría.
+                }
+                while(used4Answers.contains(randomAnswer));
+                used4Answers.add(randomAnswer);
+                                
                 answer = answersCat4.get(randomAnswer);
                 questionObj = Question.getQuestionByCode(answer.getCode());
                 question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
                 break;
             case 5: 
-                answersCat5 = Console.Answer.getCategoryNAnswers((byte)5, answers);
-                randomAnswer = (int) (Math.random() * answersCat5.size());
+                counter = 0;
+                do{
+                    counter++;
+                    randomAnswer = (int) (Math.random() * answersCat5Size);
+                    if(counter > 10) break; //Por si ya se han usado todas las respuestas de esta categoría.
+                }
+                while(used5Answers.contains(randomAnswer));
+                used5Answers.add(randomAnswer);
+                
                 answer = answersCat5.get(randomAnswer);
                 questionObj = Question.getQuestionByCode(answer.getCode());
                 question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
                 break;
             case 6: 
-                answersCat6 = Console.Answer.getCategoryNAnswers((byte)6, answers);
-                randomAnswer = (int) (Math.random() * answersCat6.size());
+                counter = 0;
+                do{
+                    counter++;
+                    randomAnswer = (int) (Math.random() * answersCat6Size);
+                    if(counter > 10) break; //Por si ya se han usado todas las respuestas de esta categoría.
+                }
+                while(used6Answers.contains(randomAnswer));
+                used6Answers.add(randomAnswer);
+                
                 answer = answersCat6.get(randomAnswer);
                 questionObj = Question.getQuestionByCode(answer.getCode());
                 question = StringFormat.removeSpacesAtTheBeggining(questionObj.getQuestion());
@@ -187,9 +272,10 @@ public class GameWindow {
 
         Text player2 = new Text(EnterNames.player2Name);
         player2.setId("player");
+        grid.setHalignment(player2, HPos.RIGHT);
         Text player2Points = new Text(Short.toString(p2Points)/* + " puntos"*/);
         player2Points.setId("points");
-        grid.setHalignment(player2Points, HPos.CENTER);
+        grid.setHalignment(player2Points, HPos.RIGHT);
         
         
         if(turn % 2 == 0){
@@ -198,15 +284,15 @@ public class GameWindow {
             player1.setId("playing");
         }
         
-        grid.add(player1, 0, 0);
-        grid.add(player1Points, 0, 1);
+        grid.add(player1, 0, 1);
+        grid.add(player1Points, 0, 2);
 
-        grid.add(numQuestion, 3, 0);
+        grid.add(numQuestion, 0, 0, 3, 1);
 
-        grid.add(player2, 7, 0);
-        grid.add(player2Points, 7, 1);
+        grid.add(player2, 2, 1);
+        grid.add(player2Points, 2, 2);
         //\\
-        input = new TextArea();
+        TextArea input = new TextArea();
         
         
         
@@ -234,17 +320,33 @@ public class GameWindow {
                 break;
         }
         grid.setHalignment(categoryText, HPos.CENTER);
-        grid.add(categoryText, 3, 2);
+        grid.add(categoryText, 0, 4, 3, 1);
         
         questionText = new Text(question);
         questionText.setId("normalText");
-        grid.setHalignment(questionText, HPos.CENTER);
-        grid.add(questionText, 3, 3);
+        TextFlow questionTextFlow = new TextFlow(questionText);
+        questionTextFlow.setTextAlignment(TextAlignment.CENTER);
+        
+        grid.setHalignment(questionTextFlow, HPos.CENTER);
+        grid.add(questionTextFlow, 0, 5, 3, 1);
         
         switch(answer.TYPE_OF_ANSWER){
             case 1: 
                 input.setPrefRowCount(1);
                 input.setPrefColumnCount(30); //Será de una sola fila
+                
+                grid.add(input, 0, 6, 3, 1);
+                Button enter = new Button("Aceptar");
+                grid.setHalignment(enter, HPos.CENTER);
+                input.textProperty().addListener((observable, oldValue, newValue) -> 
+                    {
+                        if(newValue.length() > 30){
+                            input.setText(input.getText().substring(0, 30));    
+                            MyAlerts.infoAlert("No hay respuestas con más de 30 letras.");
+                        }
+                    }
+                );
+                
                 input.setOnKeyPressed((KeyEvent e) -> 
                     {
                         if(e.getCode().equals(KeyCode.ENTER)){
@@ -252,26 +354,30 @@ public class GameWindow {
                         }
                     }
                 );
-                grid.add(input, 3, 4);
-                Button enter = new Button("Aceptar");
-                grid.setHalignment(enter, HPos.CENTER);
 
-
+                
+                
+                grid.add(enter, 0, 7, 3, 1);
                 enter.setOnAction(e -> 
                     {
                         checkAnswer(input.getText(), StringFormat.removeSpacesAtTheBeggining(answer.getAnswer()));
                     }
                 );
-                
-                grid.add(enter, 3, 5);
+                        
                 break;
             case 2:
+                VBox yesAndNoButtons = new VBox();
                 Button yes = new Button("Sí");
+                yes.setMaxWidth(Double.MAX_VALUE);
                 Button no = new Button("No");
+                no.setMaxWidth(Double.MAX_VALUE);
                 
-                grid.add(yes, 2, 5);
-                grid.add(no, 4, 5);
+                yesAndNoButtons.setAlignment(Pos.CENTER);
                 
+                yesAndNoButtons.setSpacing(6);
+                yesAndNoButtons.getChildren().addAll(yes, no);
+                grid.add(yesAndNoButtons, 0, 6, 3, 1);
+              
                 yes.setOnAction(e -> 
                     {
                         checkAnswer("s", answer.getAnswer());
@@ -284,30 +390,31 @@ public class GameWindow {
                 );
                 break;
             case 3:
+                VBox options = new VBox();
                 Console.MultipleAnswer mAnswer = (Console.MultipleAnswer)(answer);
                 Button option1 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer()));
-                grid.setHalignment(option1, HPos.CENTER);
+                option1.setMaxWidth(Double.MAX_VALUE);
                 Button option2 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer2()));
-                grid.setHalignment(option2, HPos.CENTER);
+                option2.setMaxWidth(Double.MAX_VALUE);
                 Button option3 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer3()));
-                grid.setHalignment(option3, HPos.CENTER);
+                option3.setMaxWidth(Double.MAX_VALUE);
                 Button option4 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer4()));
-                grid.setHalignment(option4, HPos.CENTER);
-                Button option5 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer5()));
-                grid.setHalignment(option5, HPos.CENTER);
-                
-                grid.add(option1, 3, 4);
-                grid.add(option2, 3, 5);
-                grid.add(option3, 3, 6);
-                grid.add(option4, 3, 7);
-                grid.add(option5, 3, 8);
+                option4.setMaxWidth(Double.MAX_VALUE);
+                Button option5 = new Button(StringFormat.removeSpacesAtTheBeggining(mAnswer.getAnswer5()));   
+                option5.setMaxWidth(Double.MAX_VALUE);
                 
                 option1.setOnAction(e -> checkAnswer("1", Byte.toString(mAnswer.getCorrectAnswer())));
                 option2.setOnAction(e -> checkAnswer("2", Byte.toString(mAnswer.getCorrectAnswer())));
                 option3.setOnAction(e -> checkAnswer("3", Byte.toString(mAnswer.getCorrectAnswer())));
                 option4.setOnAction(e -> checkAnswer("4", Byte.toString(mAnswer.getCorrectAnswer())));
                 option5.setOnAction(e -> checkAnswer("5", Byte.toString(mAnswer.getCorrectAnswer())));
+                options.getChildren().addAll(option1, option2, option3, option4, option5);
                 
+                options.setAlignment(Pos.CENTER);
+                
+                options.setSpacing(6);
+                options.setPadding(new Insets(0, 20, 10, 20)); 
+                grid.add(options, 0, 6, 3, 1);
                 break;
         }
     }
@@ -324,14 +431,10 @@ public class GameWindow {
         grid.getChildren().clear();
         String message = "";
         if(userAnswer.toLowerCase().equals(correctAnswer.toLowerCase())){
-            grid.setBackground(
-                    new Background(
-                            new BackgroundImage(
-                                    new Image("thumbsUpHD.jpg"), 
-                                    BackgroundRepeat.NO_REPEAT, 
-                                    BackgroundRepeat.NO_REPEAT, 
-                                    BackgroundPosition.CENTER, 
-                                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
+            ImageView victoryImage = new ImageView(new Image("thumbsUpHD.jpg", (UI.GameMenus.WIDTH / 2.5), 0, true, false));
+            grid.add(victoryImage, 0, 2);
+            grid.setHalignment(victoryImage, HPos.CENTER);
+
             if(GameMenus.isSoundOn){
                 MediaPlayer applause = new MediaPlayer(new Media(Paths.get("src/applause.wav").toUri().toString()));
                 applause.play();
@@ -344,14 +447,10 @@ public class GameWindow {
                 p1Points++;
             }
         } else{
-            grid.setBackground(
-                    new Background(
-                            new BackgroundImage(
-                                    new Image("thumbsDownRedHD.jpg"), 
-                                    BackgroundRepeat.NO_REPEAT, 
-                                    BackgroundRepeat.NO_REPEAT, 
-                                    BackgroundPosition.CENTER, 
-                                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true))));
+            ImageView defeatImage = new ImageView(new Image("thumbsDownRedHD.jpg", (UI.GameMenus.WIDTH / 2.5), 0, true, false));
+            grid.add(defeatImage, 0, 2);
+            grid.setHalignment(defeatImage, HPos.CENTER);
+           
             if(GameMenus.isSoundOn){
                 MediaPlayer failSound = new MediaPlayer(new Media(Paths.get("src/fail.mp3").toUri().toString()));
                 failSound.play();
@@ -374,16 +473,26 @@ public class GameWindow {
             }
         }
         Label result = new Label(message);
+        TextFlow resultTextFlow = new TextFlow(result);
+        resultTextFlow.setTextAlignment(TextAlignment.CENTER);
         result.setId("normalText");
-        grid.setHalignment(result, HPos.CENTER);
         
         Label keepPlaying = new Label("Clica en la ventana o pulsa Enter para continuar jugando.");
         keepPlaying.setId("normalText");
+
+        /*VBox vbox = new VBox();
+        vbox.setPrefWidth(UI.GameMenus.WIDTH);
+        vbox.setPrefHeight(UI.GameMenus.HEIGHT);
+        vbox.setSpacing(6);
+        vbox.setMargin(keepPlaying, new Insets(6));
+        
+        vbox.getChildren().addAll(resultTextFlow, keepPlaying);
+        vbox.setAlignment(Pos.CENTER);*/
+        
+        grid.add(resultTextFlow, 0, 0);
+        grid.setHalignment(resultTextFlow, HPos.CENTER);
+        grid.add(keepPlaying, 0, 1);
         grid.setHalignment(keepPlaying, HPos.CENTER);
-
-
-        grid.add(result, 1, 1);
-        grid.add(keepPlaying, 1, 3);
         grid.setVisible(true);
         grid.setOnMouseClicked(e -> 
             {
@@ -391,7 +500,8 @@ public class GameWindow {
                 game();
             }
         );
-        grid.setOnKeyPressed((KeyEvent e) ->
+
+        EnterNames.game.setOnKeyPressed((KeyEvent e) ->
             {
                 if(e.getCode().equals(KeyCode.ENTER)){
                     grid.getChildren().clear();
@@ -399,6 +509,7 @@ public class GameWindow {
                 }
             }
         );
+
     }
     /**
      * Pregunta a los jugadores si quieren jugar otra vez. Si responden que sí (pulsando el botón «Sí»),
@@ -412,23 +523,32 @@ public class GameWindow {
 
         
         Label playAgain = new Label("¿Queréis jugar una nueva partida?");
+        HBox hbox = new HBox();
         Button yes = new Button("Sí");
         Button no = new Button("No");
+        
+        
+        hbox.getChildren().addAll(yes, no);
+        hbox.setSpacing(6);
+        hbox.setAlignment(Pos.CENTER);
         
         grid.add(winner, 0, 0);
         grid.setHalignment(winner, HPos.CENTER);
         
-        grid.add(playAgain, 0, 1, 2, 1);
+        grid.add(playAgain, 0, 1);
         grid.setHalignment(playAgain, HPos.CENTER);
         //Sí
-        grid.add(yes, 0, 2);
+        grid.add(hbox, 0, 2);
         grid.setHalignment(yes, HPos.CENTER);
         //\\No
-        grid.add(no, 1, 2);
-        grid.setHalignment(no, HPos.CENTER);
-        //\\
         yes.setOnAction(e -> 
             {
+                used1Answers = new ArrayList<>();
+                used2Answers = new ArrayList<>();
+                used3Answers = new ArrayList<>();
+                used4Answers = new ArrayList<>();
+                used5Answers = new ArrayList<>();
+                used6Answers = new ArrayList<>();
                 turn = 1;
                 p1Points = 0;
                 p2Points = 0;

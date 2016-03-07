@@ -62,7 +62,11 @@ public class Input {
         }
         return value;
     }
-    
+    /**
+     * Introduce una cadena alfanumérica por teclado.
+     * @param message el mensaje que aparece cuando el programa pregunta por el texto.
+     * @return el texto introducido.
+     */
     public static String input(String message){
         System.out.print(message);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -98,6 +102,10 @@ public class Input {
         }
         return value;
     }
+    /**
+     * Introduce una pregunta por teclado. Las preguntas no pueden tener más de 150 caracteres.
+     * @return la pregunta creada.
+     */
     public static String questionInput(){
         String question;
         do{

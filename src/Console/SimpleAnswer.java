@@ -24,11 +24,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Respuesta de tipo simple. La respuesta tiene una longitud máxima de 30
+ * caracteres.
  * @author Jorge Maldonado Ventura 
  */
 public class SimpleAnswer extends Answer{
-
+    /**
+     * Escribe una respuesta simple al final del fichero de respuestas.
+     */
     public static void addSimpleAnswer() {
         String answer = String.format("%" + Answer.ANSWER_LENGTH + "s", Input.answerInput("Escribe la respuesta.\n>>> "));
         answerObj = new SimpleAnswer(Question.questionObj.getCode(), false, Question.questionObj.getCategory(), answer);
@@ -41,7 +44,9 @@ public class SimpleAnswer extends Answer{
         }
     }
     
-
+    /**
+     * Crea una respuesta simple predeterminada.
+     */
     public SimpleAnswer() {
         code = 0;
         deleted = true;
@@ -49,7 +54,13 @@ public class SimpleAnswer extends Answer{
         answer = "";
         TYPE_OF_ANSWER = 1;
     }
-    
+    /**
+     * Crea una respuesta simple
+     * @param code el código de la respuesta.
+     * @param deleted el estado de la respuesta.
+     * @param category la categoría de la respuesta.
+     * @param answer la respuesta correcta.
+     */
     public SimpleAnswer(int code, boolean deleted, byte category, String answer) {
         this.code = code;
         this.deleted = deleted;
@@ -91,7 +102,11 @@ public class SimpleAnswer extends Answer{
             Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    /**
+     * La representación del objeto del tipo respuesta simple.
+     * @return la representación del objeto del tipo respuesta simple con cada
+     * atributo en una línea y una cabecera que pone el tipo de respuesta.
+     */
     @Override
     public String toString() {
         return "RESPUESTA SIMPLE\n"
@@ -101,9 +116,8 @@ public class SimpleAnswer extends Answer{
 //                + "Borrada: " + deleted + ".\n"
                 + "Respuesta: " + answer + ".\n";        
     }
-    /**
-     * Devuelve las re
-     */
+
+    //Por acceso secuencial
     public static ArrayList<SimpleAnswer> getSimpleAnswers(ArrayList<Answer> answers){
         ArrayList<SimpleAnswer> simpleAnswers = new ArrayList<>();
         for(int i = 0; i < answers.size(); i++){
@@ -113,4 +127,33 @@ public class SimpleAnswer extends Answer{
         }
         return simpleAnswers;
     }
+    
+    /*
+    Por acceso directo
+    */
+    /*
+    public static ArrayList<SimpleAnswer> getSimpleAnswers(ArrayList<Answer> answers){
+        ArrayList<SimpleAnswer> simpleAnswers = new ArrayList<>();
+        try(RandomAccessFile raf = new RandomAccessFile(answersFile, "r")){
+            byte type;
+            while(raf.getFilePointer() < raf.length()){
+                type = Answer.readType(raf);
+                if(type == 1){
+                    answerObj.answerReader(raf);
+                    simpleAnswers.add((SimpleAnswer)answerObj);
+                } else if(type == 2){
+                    raf.seek();
+                } else{
+                    
+                }
+            }
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SimpleAnswer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    */
 }

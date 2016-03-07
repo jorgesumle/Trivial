@@ -28,20 +28,42 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * La clase Question representa las respuestas del videojuego.
  * @author Jorge Maldonado Ventura 
  */
 public class Question {
+    /**
+     * Código de la respuesta.
+     */
     public int code;
+    /**
+     * Categoría de la respuesta.
+     */
     public byte category;
+    /**
+     * El estado de la pregunta. Su valor es <i>true</i> si está borrada; <i>false</i> si no.
+     */
     public boolean deleted;
+    /**
+     * La pregunta. Tiene una longitud máxima de 150 caracteres.
+     */
     public String question;
-    
-    public final static byte QUESTION_LENGTH = 120;
-    protected static String questionsFile = "preguntas.dat";
+    /**
+     * La longitud máxima de la pregunta.
+     */
+    public final static short QUESTION_LENGTH = 150;
+    /**
+     * La ruta en la que se guardan las preguntas cuando así se indica.
+     */
+    protected static String questionsFile = "src/preguntas.dat";
+    /**
+     * Se utiliza para guardar Question creado o leído de un fichero.
+     */
     protected static Question questionObj;
-    protected final static short QUESTION_OBJECT_LENGTH = 128;
-    
+    protected final static short QUESTION_OBJECT_LENGTH = 158; //arréglalo para el acceso directo.
+    /**
+     * Elimina las preguntas que ya habían sido marcadas como borradas.
+     */
     public static void removeDeletedQuestions() {
         ArrayList<Question> questions = getQuestions();
         Question.removeQuestionsPermanently();
@@ -55,12 +77,15 @@ public class Question {
             Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+/**
+ * Modifica una pregunta de un fichero.
+ * @param code el código de la pregunta que se quiere modificar.
+ */
     public static void modifyQuestion(int code) {
         Query.printAnswerAndQuestionByCode(code);
         String modify = "";
         do {
-            modify = Input.input("Estás seguro de que quieres modificar esta pregunta. Si " + "dices que sí, se borrará y deberás introducir todos los datos" + "de la pregunta de nuevo.\n>>> ");
+            modify = Input.input("Estás seguro de que quieres modificar esta pregunta. Si dices que sí, se borrará y deberás introducir todos los datos de la pregunta de nuevo.\n>>> ");
         } while (modify.charAt(0) != 'n' && modify.charAt(0) != 's');
         if (modify.charAt(0) == 'n') {
             return;
@@ -82,7 +107,10 @@ public class Question {
             Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    /**
+     * Marca una pregunta como borrada.
+     * @param code el código de la pregunta que se quiere borrar.
+     */
     public static void removeQuestion(int code) {
         int readCode = -20; //No se asignan códigos negativos.
         boolean deleted = false;
@@ -107,7 +135,7 @@ public class Question {
                     }
                     raf.seek(positionToDelete);
                     raf.writeBoolean(true);
-                    System.out.println("Pegunta " + code + " borrada con \u00e9xito.");
+                    System.out.println("Pegunta " + code + " borrada con éxito.");
                     return;
                 }
             }
@@ -118,7 +146,10 @@ public class Question {
         }
         System.out.printf("La pregunta con el código %d no existe.%n", code);
     }
-
+    /**
+     * Obtiene todas las preguntas que no están marcadas como borradas.
+     * @return las preguntas no marcadas como borradas.
+     */
     public static ArrayList getQuestions() {
         Question question = new Question();
         ArrayList<Question> questions = new ArrayList<>();
@@ -149,42 +180,66 @@ public class Question {
     }
     
     
-    
+    /**
+     * Crea una pregunta predeterminada.
+     */
     public Question() {
         code = 0;
         question = "";
         deleted = true;
         category = 0;
     }
-
+    /**
+     * Crea una pregunta con los datos indicados por el usuario.
+     * @param code el código de la pregunta.
+     * @param question la pregunta.
+     * @param category la categoría.
+     */
     public Question(int code, String question, byte category) {
         this.code = code;
         this.question = question;
-        this.deleted = false; //No puedes crear una pregunta borrada.
+        this.deleted = false; //No puedes crear una pregunta ya borrada.
         this.category = category;
     }
-
+    /**
+     * Obtiene el código de la pregunta.
+     * @return el código de la pregunta.
+     */
     public int getCode() {
         return code;
     }
-
+    /**
+     * Obtiene la categoría de la pregunta
+     * @return la categoría de la pregunta.
+     */
     public byte getCategory() {
         return category;
     }
-
+    /**
+     * Obtiene la pregunta
+     * @return la pregunta.
+     */
     public String getQuestion() {
         return question;
     }
-
+    /**
+     * Asigna una pregunta al objeto.
+     * @param question la pregunta que se quiere asignar.
+     */
     public void setQuestion(String question) {
         this.question = question;
     }
-    
-
+    /**
+     * Devuelve el estado de la pregunta. Su valor es <i>true</i> si está borrada; <i>false</i> si no.
+     * @return 
+     */
     public boolean isDeleted() {
         return deleted;
     }
-
+    /**
+     * Marca una pregunta como borrada o no borrada.
+     * @param deleted 
+     */
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
@@ -218,6 +273,10 @@ public class Question {
             Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     * La representación del objeto de tipo pregunta.
+     * @return la representación del objeto de tipo pregunta.
+     */
     @Override
     public String toString() {
         return "PREGUNTA\n"
@@ -245,10 +304,50 @@ public class Question {
                 code = Integer.MIN_VALUE;
             }
         }
-        
-        questionObj = new Question(code, question, Input.selectCategory());
-            
+        questionObj = new Question(code, question, Input.selectCategory());       
     }
+    
+    /*Usando acceso directo, sin implementar aún. Futura versión.
+    public static void addQuestion(){
+        String question = Input.questionInput();
+        int code = 0;
+        
+        ArrayList<Integer> codesUsed = getCodes();
+        ArrayList<Question> questions = getQuestions();
+
+        while(codesUsed.contains(code)){
+            if(!(code >= Integer.MAX_VALUE)) //== también funcionaría.
+                code++;
+            else{
+                code = Integer.MIN_VALUE;
+            }
+        }
+        questionObj = new Question(code, question, Input.selectCategory());
+    }*/
+    
+    /*Usando acceso directo, sin implementar aún. Futura versión.
+    public static ArrayList<Integer> getCodes(){
+        ArrayList<Integer> codesUsed = new ArrayList<>();
+        try(RandomAccessFile codesRAF = new RandomAccessFile(questionsFile, "rw")){
+            long sizeOfQuestionsFile = codesRAF.length();
+            while(codesRAF.getFilePointer() < sizeOfQuestionsFile){
+                codesUsed.add(codesRAF.readInt());
+                codesRAF.seek(QUESTION_OBJECT_LENGTH);
+            }
+            for(int i = 0; i < codesUsed.size(); i++){
+                System.out.println(codesUsed.get(i));
+            }
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return codesUsed;
+    }*/
+    /**
+     * Añade una pregunta al final del fichero de preguntas.
+     */
     public static void appendQuestion(){
         try(RandomAccessFile questionRAF = new RandomAccessFile(questionsFile, "rw")){
             //Crea y escribe las preguntas
@@ -262,10 +361,20 @@ public class Question {
             Logger.getLogger(ConsoleGame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    /*public static void getSimpleQuestions(ArrayList<Question> questions){
-        ArrayList<Question> simpleQuestions = new ArrayList<>();
+    /**
+     * Obtiene el objeto pregunta conociendo su código por acceso secuencial.
+     * @param code código que se quiere obtener.
+     * @return el objeto Question solicitado si existe, si no existe devuelve <i>null</i>.
+     */
+    public static Question getQuestionByCode(int code){
+        Question question = null;
+        ArrayList<Question> questions = getQuestions();
         for(int i = 0; i < questions.size(); i++){
-            if()
+            if(questions.get(i).getCode() == code){
+                question = questions.get(i);
+                break;
+            }
         }
-    }*/
+        return question;
+    }
 }

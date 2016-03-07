@@ -1,12 +1,26 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+ * Copyright (C) 2016 Jorge Maldonado Ventura 
+ *
+ * Este programa es software libre: usted puede redistruirlo y/o modificarlo
+ * bajo los términos de la Licencia Pública General GNU, tal y como está publicada por
+ * la Free Software Foundation; ya sea la versión 3 de la Licencia, o
+ * (a su elección) cualquier versión posterior.
+ *
+ * Este programa se distribuye con la intención de ser útil,
+ * pero SIN NINGUNA GARANTÍA; incluso sin la garantía implícita de
+ * USABILIDAD O UTILIDAD PARA UN FIN PARTICULAR. Vea la
+ * Licencia Pública General GNU para más detalles.
+ *
+ * Usted debería haber recibido una copia de la Licencia Pública General GNU
+ * junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
+*/
 package Console;
 
 import java.util.ArrayList;
-
+/**
+ * Esta clase permite hacer consultas que luego se muestran información en forma de tabla.
+ * @author Jorge Maldonado Ventura 
+ */
 public class Query {
     final static String CODE_HEADER = "Código";
     final static String QUESTIONS_HEADER = "Pregunta";
@@ -14,9 +28,18 @@ public class Query {
     final static String ANSWERS_HEADER = "Respuesta";
     final static String TYPE_OF_ANSWER_HEADER = "Tipo de respuesta";
     
-    final static byte LENGTH_OF_CODE_FIELD = 10;
-    final static byte LENGTH_OF_CATEGORY_FIELD = 21;
-    
+    //final static byte LENGTH_OF_CODE_FIELD = 10;
+    //final static byte LENGTH_OF_CATEGORY_FIELD = 21;
+    /**
+     * Muestra una tabla con estilo. Los campos se centran y se ajustan a la longitud
+     * del elemento correspondiente del arreglo
+     * de bytes pasado como parámetro o
+     * del campo más largo de una columna si este supera al elemento correspondiente
+     * del arreglo de bytes mencionado. 
+     * @param headers las cabeceras de la tabla.
+     * @param minFieldLength longitud mínima de cada campo de la tabla.
+     * @param fields los campos de la tabla.
+     */
     public static void showTable(String[] headers, byte[] minFieldLength, String[][] fields){
    
         for(int i = 0; i < fields.length; i++){
@@ -53,7 +76,7 @@ public class Query {
         System.out.println(line);
         //\\        
     }
-    
+    /*
     public static void showAnswers(){
         ArrayList<Answer> answers = Answer.getAnswers();
         ArrayList<String> category = new ArrayList<>();
@@ -97,7 +120,8 @@ public class Query {
             System.out.printf("| %" + LENGTH_OF_CODE_FIELD + "s | %-21s | %-" + lengthOfLongestAnswer + "s |%n", answers.get(i).getCode(), category.get(i), answers.get(i).getAnswer());
         }
         System.out.format("+%" + (lengthOfLongestAnswer) +"s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + LENGTH_OF_CATEGORY_FIELD+ lengthOfLongestAnswer));
-    }
+    }*/
+    /*
     public static void showSimpleQuestionsAndAnswers() {
         ArrayList<Question> questions = Question.getQuestions();
         ArrayList<String> category = new ArrayList<>();
@@ -133,8 +157,8 @@ public class Query {
             System.out.printf("| %" + LENGTH_OF_CODE_FIELD + "s | %-21s | %-" + lengthOfLongestQuestion + "s | %" + lengthOfLongestAnswer + "s |%n", questions.get(i).getCode(), category.get(i), questions.get(i).getQuestion(), simpleAnswers.get(i).getAnswer()); 
         }
         System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + lengthOfLongestAnswer + 11));
-    }
-    
+    }*/
+    /**
     public static void showYesOrNoQuestions(){
         ArrayList<Question> questions = Question.getQuestions();
         ArrayList<String> category = new ArrayList<>();
@@ -175,6 +199,7 @@ public class Query {
         }
         System.out.format("+%s+%n", StringFormat.repeatChar('-', LENGTH_OF_CODE_FIELD + lengthOfLongestQuestion + LENGTH_OF_CATEGORY_FIELD + lengthOfLongestAnswer + 11));
     }
+    */
     /**
      * Muestra la pregunta y la respuesta que se le indica. Si no existe el código de respuesta
      * o de pregunta especificado se muestra un mensaje que avisa al usuario de que
@@ -187,7 +212,7 @@ public class Query {
     }
     /**
      * Muestra la respuesta que se le indica. Si no existe el código de respuesta
-     * especificado, se muestra el siguiente mensaje: "No existe ese código de respuesta".
+     * especificado, se muestra el siguiente mensaje: «No existe ese código de respuesta».
      * @param code el código de la respuesta que se quiere mostrar por pantalla.
      */
     public static void printAnswerByCode(int code){
@@ -208,7 +233,7 @@ public class Query {
     }
     /**
      * Muestra la pregunta que se le indica. Si no existe el código de pregunta
-     * especificado, se muestra el siguiente mensaje: "No existe ese código de pregunta".
+     * especificado, se muestra el siguiente mensaje: «No existe ese código de pregunta».
      * @param code el código de la pregunta que se quiere mostrar por pantalla.
      */
     public static void printQuestionByCode(int code){
@@ -228,6 +253,10 @@ public class Query {
         }
         
     }
+    /**
+     * Muestra una pregunta por pantalla.
+     * @param question el objeto del tipo Question cuya pregunta se quiere mostrar.
+     */
     public static void showQuestion(Question question) {
         System.out.printf("%s%n", StringFormat.removeSpacesAtTheBeggining(question.getQuestion()));
     }

@@ -28,12 +28,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -44,6 +47,20 @@ import javafx.scene.text.TextFlow;
  * @author Jorge Maldonado Ventura 
  */
 public class GameMenus {
+    //Quizás se podría hacer con herencia para todas las ventanas de forma más sencilla.
+    /**
+     * Anchura de todas las ventanas del juego.
+     */
+    public static short WIDTH = 320;
+    /**
+     * Altura de todas las ventanas del juego.
+     */
+    public static short HEIGHT = 480;
+    
+    /**
+     * El panel que está siendo usado actualmente.
+     */
+    public static Pane currentPane;
     /**
      * Crea el menú principal del juego. Desde aquí se puede acceder al juego y a 
      * otros submenús.
@@ -55,12 +72,15 @@ public class GameMenus {
         loadConfig();
         
         GridPane menu = new GridPane();
+        currentPane = menu;
         menu.setAlignment(Pos.CENTER);
         menu.setVgap(20);
         //menu.setHgap(5);
         
-        Scene menuScene = new Scene(menu, 300, 300);
+        Scene menuScene = new Scene(menu, WIDTH, HEIGHT);
         menuScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        
+        BackgroundStyle.setResizableBackground(menu, "questionMarksBackground.jpg");
         
         Text title = new Text("QUAESTIONES");
         title.setId("title");
@@ -78,7 +98,17 @@ public class GameMenus {
         Button credits = new Button("Créditos");
         credits.setOnAction(e -> credits());
         Button exit = new Button("Salir");
-        exit.setOnAction(e -> System.exit(0));
+        exit.setOnAction(e -> 
+            {   
+                if(askBeforeClose){
+                    BoxBlur blur = new BoxBlur(GameMenus.WIDTH / 64, GameMenus.HEIGHT / 64, 1);
+                    currentPane.setEffect(blur);
+                    MyAlerts.exitAlert("Quaestiones - ¿salir?", "¿Estás seguro de que quieres cerrar el programa?", currentPane);
+                } else{
+                    System.exit(0);
+                }
+            }
+        );
         
         menu.add(title, 0, 0);
         
@@ -98,7 +128,9 @@ public class GameMenus {
         Quaestiones.stage.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e) -> {
             if(e.getCode().equals(KeyCode.ESCAPE)){
                 if(askBeforeClose){
-                    Alert.exitAlert("Quaestiones - ¿salir?", "¿Estás seguro de que quieres cerrar el programa?", menu);
+                    BoxBlur blur = new BoxBlur(GameMenus.WIDTH / 64, GameMenus.HEIGHT / 64, 1);
+                    currentPane.setEffect(blur);
+                    MyAlerts.exitAlert("Quaestiones - ¿salir?", "¿Estás seguro de que quieres cerrar el programa?", currentPane);
                 } else{
                     System.exit(0);
                 }
@@ -106,7 +138,7 @@ public class GameMenus {
         });
     }
     /**
-     * El estado de los sonidos del juego. Con <i>true</i> están activados; con false desactivados.
+     * El estado de los sonidos del juego. Con <i>true</i> están activados; con <i>false</i> desactivados.
      */
     protected static boolean isSoundOn = true;
     /**
@@ -115,23 +147,32 @@ public class GameMenus {
      */
     protected static boolean askBeforeClose = false;
     /**
+     * La lista desplegable con las distintas resoluciones.
+     */
+    private static ChoiceBox<String> resolution;
+    final static String R1366x768 = "1366 x 768";
+    final static String R320x480 = "320 x 480";
+    /**
      * Carga el menú de configuración del juego, desde donde se pueden activar y
      * desactivar los sonidos
      */
     private static void config(){
         GridPane configMenu = new GridPane();
+        currentPane = configMenu;
+        
         configMenu.setAlignment(Pos.CENTER);
         configMenu.setVgap(20);
         
-        Scene configScene = new Scene(configMenu, 300, 300);
+        Scene configScene = new Scene(configMenu, WIDTH, HEIGHT);
         configScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
-
+        BackgroundStyle.setResizableBackground(configMenu, "questionMarksBackground2.jpg");
+        
         Text title = new Text("Configuración");
         title.setId("smallTitle");
         final Label SOUND_LABEL = new Label("Sonidos"); 
         Button sound;
-        final String SOUND_ON = "Activados";
-        final String SOUND_OFF = "Desactivados";
+        final String SOUND_ON = "Sí";
+        final String SOUND_OFF = "No";
         if(isSoundOn){
             sound = new Button(SOUND_ON);
         } else{
@@ -147,7 +188,6 @@ public class GameMenus {
                     sound.setText(SOUND_ON);
                     isSoundOn = true;
                 }
-                saveConfig();
             }
         );
         Label ASK_TO_CLOSE = new Label("Preguntar antes de cerrar el programa");
@@ -168,17 +208,35 @@ public class GameMenus {
                     askToClose.setText(ASK_BEFORE_CLOSE);
                     askBeforeClose = true;
                 }
-                saveConfig();
             }
         );
         
         
+        final Label RESOLUTION_STR = new Label("Resolución predeterminada"); 
+        resolution = new ChoiceBox<>();
+        
+        //Opciones de la lista desplegable
+        resolution.getItems().add(R320x480);
+        resolution.getItems().add(R1366x768);
+        
+        if(WIDTH == 320 && HEIGHT == 480){
+            resolution.setValue(R320x480);
+        } else if(WIDTH == 1366 && HEIGHT == 768){
+            resolution.setValue(R1366x768);
+        }
+        
         
         Button back = new Button("Volver atrás");
-        back.setOnAction(e -> GameMenus.createMenu());
+        back.setOnAction(e -> 
+            {
+                saveConfig();
+                GameMenus.createMenu();
+            }
+        );
         
         
         configMenu.add(title, 0, 0, 2, 1);
+        configMenu.setHalignment(title, HPos.CENTER);
         
         configMenu.add(SOUND_LABEL, 0, 2);
         configMenu.setHalignment(SOUND_LABEL, HPos.CENTER);
@@ -188,7 +246,10 @@ public class GameMenus {
         configMenu.setHalignment(ASK_TO_CLOSE, HPos.CENTER);
         configMenu.add(askToClose, 1, 3);
         configMenu.setHalignment(askToClose, HPos.CENTER);
-        configMenu.add(back, 0, 4, 2, 1);
+        configMenu.add(RESOLUTION_STR, 0, 4);
+        configMenu.setHalignment(RESOLUTION_STR, HPos.CENTER);
+        configMenu.add(resolution, 1, 4);
+        configMenu.add(back, 0, 5, 2, 1);
         configMenu.setHalignment(back, HPos.CENTER);
         
         
@@ -199,6 +260,10 @@ public class GameMenus {
      */
     private static void instructions() {
         VBox instructionsMenu = new VBox();
+        currentPane = instructionsMenu;
+        
+        instructionsMenu.setPrefWidth(WIDTH);
+        instructionsMenu.setPrefHeight(HEIGHT);
         instructionsMenu.setAlignment(Pos.CENTER);
         instructionsMenu.setSpacing(10);
         
@@ -208,15 +273,16 @@ public class GameMenus {
         
         Text gameTitle = new Text("Quaestiones");
         gameTitle.setStyle("-fx-font-style: italic;");
-        Text instructionsText = new Text(" es un videojuego para dos jugadores."
+        Text instructionsText = new Text(" es un videojuego para dos jugadores. "
                 + "Cada jugador tiene que responder a diez preguntas "
                 + "en turnos alternos y suma un punto por cada pregunta "
                 + "acertada. El ganador es el jugador que consiga más "
                 + "puntos al término de la ronda de diez preguntas. "
-                + "Si se produce un empate, en el turno 20, se "
-                + "seguirás haciendo preguntas hasta que algún jugador falle."
+                + "Si se produce un empate en el turno 20, se "
+                + "seguirán haciendo preguntas hasta que algún jugador falle."
         );
         TextFlow instructions = new TextFlow(gameTitle, instructionsText);
+        instructions.getStyleClass().add("textFlow");
         instructions.setTextAlignment(TextAlignment.CENTER);
         
         instructionsMenu.setMargin(instructions, new Insets(6));
@@ -225,9 +291,11 @@ public class GameMenus {
         back.setOnAction(e -> GameMenus.createMenu());
         
         instructionsMenu.getChildren().addAll(title, instructions, back);
+        BackgroundStyle.setResizableBackground(instructionsMenu, "questionMarksBackground2.jpg");
         
         
-        Scene instructionsScene = new Scene(instructionsMenu, 300, 300);
+        Scene instructionsScene = new Scene(instructionsMenu, WIDTH, HEIGHT);
+        
         instructionsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
         Quaestiones.stage.setScene(instructionsScene);
     }
@@ -236,6 +304,8 @@ public class GameMenus {
      */
     public static void credits(){
         VBox creditsMenu = new VBox();
+        currentPane = creditsMenu;
+        
         creditsMenu.setAlignment(Pos.CENTER);
         creditsMenu.setSpacing(10);
         
@@ -243,6 +313,7 @@ public class GameMenus {
         title.setId("smallTitle");
         
         creditsMenu.setMargin(creditsMenu, new Insets(6));
+        BackgroundStyle.setResizableBackground(creditsMenu, "questionMarksBackground2.jpg");
         
         Text jorge = new Text("Jorge Maldonado Ventura (programación y diseño).\n\n");
         
@@ -251,8 +322,9 @@ public class GameMenus {
         
         TextFlow credits = new TextFlow(jorge, hand);
         credits.setTextAlignment(TextAlignment.CENTER);
+        credits.getStyleClass().add("textFlow");
         
-        ImageView GPL = new ImageView(new Image("/GPL.jpg", 100, 50, true, true));
+        ImageView GPL = new ImageView(new Image("/GPL.jpg", 100, 50, true, false));
         
         Text copyrightFooter = new Text("Quaestiones © 2016 Jorge Maldonado Ventura.\n"
             + "Este programa es software libre: usted puede redistruirlo y/o modificarlo "+
@@ -262,22 +334,31 @@ public class GameMenus {
         );
         TextFlow copyrightFter = new TextFlow(copyrightFooter);
         copyrightFter.setTextAlignment(TextAlignment.CENTER);
+        copyrightFter.setId("copyright");
                 
         Button back = new Button("Volver atrás");
         back.setOnAction(e -> GameMenus.createMenu());
         
         creditsMenu.getChildren().addAll(title, credits, GPL, copyrightFter, back);
         
-        Scene creditsScene = new Scene(creditsMenu, 640, 520);
+        Scene creditsScene = new Scene(creditsMenu, WIDTH, HEIGHT);
         creditsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
         Quaestiones.stage.setScene(creditsScene);
         
     }
-    final static String CONFIG_FILE = "config.ajustes";
+    final static String CONFIG_FILE = "src/config.ajustes";
     private static void saveConfig() {
+        String resolutionStr = resolution.getValue();
+        byte resolutionCode = 0;
+        if(resolutionStr.equals(R320x480)){
+            resolutionCode = 1;
+        } else if(resolutionStr.equals(R1366x768)){
+            resolutionCode = 2;
+        }
         try(RandomAccessFile raf = new RandomAccessFile(CONFIG_FILE, "rw")){
             raf.writeBoolean(isSoundOn);
             raf.writeBoolean(askBeforeClose);
+            raf.writeByte(resolutionCode);
         }
         catch (FileNotFoundException ex) {
             Logger.getLogger(GameMenus.class.getName()).log(Level.SEVERE, null, ex);
@@ -289,6 +370,16 @@ public class GameMenus {
         try(RandomAccessFile raf = new RandomAccessFile(CONFIG_FILE, "rw")){
             isSoundOn = raf.readBoolean();
             askBeforeClose = raf.readBoolean();
+            switch(raf.readByte()){ //Código de resolución - resolutionCode
+                case 1: 
+                    WIDTH = 320;
+                    HEIGHT = 480;
+                    break;
+                case 2:
+                    WIDTH = 1366;
+                    HEIGHT = 768;
+                    break;
+            }
         }
         catch (FileNotFoundException ex) {
             Logger.getLogger(GameMenus.class.getName()).log(Level.SEVERE, null, ex);
