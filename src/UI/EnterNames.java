@@ -63,8 +63,11 @@ public class EnterNames {
         mainScreen.setHgap(5);
 
         Scene enterNames = new Scene(mainScreen, GameMenus.WIDTH, GameMenus.HEIGHT);
-        
-        enterNames.getStylesheets().add(UI.GameWindow.class.getResource("namesSc.css").toExternalForm());
+        if(GameMenus.WIDTH == 320 && GameMenus.HEIGHT == 480){
+            enterNames.getStylesheets().add(UI.GameWindow.class.getResource("namesSc.css").toExternalForm());
+        } else{
+            enterNames.getStylesheets().add(UI.GameWindow.class.getResource("namesScBig.css").toExternalForm());
+        }
         BackgroundStyle.setResizableBackground(mainScreen, "abstractBlueBackground.png");
         
         Label playerLabel1 = new Label("Jugador 1");
@@ -105,8 +108,11 @@ public class EnterNames {
                     GameMenus.currentPane = grid;
                     game = new Scene(grid, GameMenus.WIDTH, GameMenus.HEIGHT);
                     GameWindow.game();
-                    
-                    game.getStylesheets().add(UI.GameWindow.class.getResource("gameSc.css").toExternalForm());
+                    if(GameMenus.WIDTH == 320 && GameMenus.HEIGHT == 480){
+                        game.getStylesheets().add(UI.GameWindow.class.getResource("gameSc.css").toExternalForm());
+                    } else{
+                        game.getStylesheets().add(UI.GameWindow.class.getResource("gameScBig.css").toExternalForm());
+                    }
                     Quaestiones.stage.setScene(game);
                 }
                 else{ //Cuando ya se ha jugado una vez o más.
