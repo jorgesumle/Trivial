@@ -17,10 +17,6 @@ junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
 /* 
     Created on : 29-feb-2016, 6:54:38
     Author     : Jorge Maldonado Ventura 
-*//*.vbox{
-    -fx-spacing: 120;
-    -fx-alignment: center;
-}
 */
 .button { 
     -fx-background-color: #DDFFA4;
@@ -34,7 +30,7 @@ junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
     -fx-background-color: #33e130;
 }
 #title{
-   -fx-font-size: 34px;
+   -fx-font-size: 68px;
    -fx-font-family: "Arial Black";
    -fx-fill: #818181;
    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
@@ -42,25 +38,25 @@ junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
 }
 
 #smallTitle{
-   -fx-font-size: 30px;
+   -fx-font-size: 60px;
    -fx-font-family: "Verdana";
    -fx-fill: #717171;
    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
    -fx-font-weight: bold;
 }
 .text{
-    -fx-font-size: 16px;
+    -fx-font-size: 32px;
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
 }
 .textFlow{
     -fx-background-color: #fcfffc;
-    -fx-font-size: 16px;
+    -fx-font-size: 32px;
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
 }
 #copyright{
     -fx-background-color: #fcfffc;
-    -fx-font-size: 15px;
+    -fx-font-size: 30px;
     -fx-font-family: "Times New Roman";
 }

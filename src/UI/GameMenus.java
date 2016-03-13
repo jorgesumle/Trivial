@@ -78,7 +78,7 @@ public class GameMenus {
         //menu.setHgap(5);
         
         Scene menuScene = new Scene(menu, WIDTH, HEIGHT);
-        menuScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        
         
         BackgroundStyle.setResizableBackground(menu, "questionMarksBackground.jpg");
         
@@ -136,6 +136,23 @@ public class GameMenus {
                 }
             }
         });
+        if(WIDTH == 320 && HEIGHT == 480){
+            menuScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+            final short BUTTON_WIDTH = 200;
+            play.setPrefWidth(BUTTON_WIDTH);
+            instructions.setPrefWidth(BUTTON_WIDTH);
+            config.setPrefWidth(BUTTON_WIDTH);
+            credits.setPrefWidth(BUTTON_WIDTH);
+            exit.setPrefWidth(BUTTON_WIDTH);
+        } else{
+            final short BUTTON_WIDTH = 400;
+            play.setPrefWidth(BUTTON_WIDTH);
+            instructions.setPrefWidth(BUTTON_WIDTH);
+            config.setPrefWidth(BUTTON_WIDTH);
+            credits.setPrefWidth(BUTTON_WIDTH);
+            exit.setPrefWidth(BUTTON_WIDTH);
+            menuScene.getStylesheets().add(UI.GameWindow.class.getResource("menuBig.css").toExternalForm());
+        }
     }
     /**
      * El estado de los sonidos del juego. Con <i>true</i> están activados; con <i>false</i> desactivados.
@@ -164,7 +181,11 @@ public class GameMenus {
         configMenu.setVgap(20);
         
         Scene configScene = new Scene(configMenu, WIDTH, HEIGHT);
-        configScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        if(WIDTH == 320 && HEIGHT == 480){
+            configScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        } else{
+            configScene.getStylesheets().add(UI.GameWindow.class.getResource("menuBig.css").toExternalForm());
+        }
         BackgroundStyle.setResizableBackground(configMenu, "questionMarksBackground2.jpg");
         
         Text title = new Text("Configuración");
@@ -283,7 +304,7 @@ public class GameMenus {
         );
         TextFlow instructions = new TextFlow(gameTitle, instructionsText);
         instructions.getStyleClass().add("textFlow");
-        instructions.setTextAlignment(TextAlignment.CENTER);
+        instructions.setTextAlignment(TextAlignment.JUSTIFY);
         
         instructionsMenu.setMargin(instructions, new Insets(6));
         
@@ -295,8 +316,11 @@ public class GameMenus {
         
         
         Scene instructionsScene = new Scene(instructionsMenu, WIDTH, HEIGHT);
-        
-        instructionsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        if(WIDTH == 320 && HEIGHT == 480){
+            instructionsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        } else{
+            instructionsScene.getStylesheets().add(UI.GameWindow.class.getResource("menuBig.css").toExternalForm());
+        }
         Quaestiones.stage.setScene(instructionsScene);
     }
     /**
@@ -324,25 +348,32 @@ public class GameMenus {
         credits.setTextAlignment(TextAlignment.CENTER);
         credits.getStyleClass().add("textFlow");
         
-        ImageView GPL = new ImageView(new Image("/GPL.jpg", 100, 50, true, false));
-        
-        Text copyrightFooter = new Text("Quaestiones © 2016 Jorge Maldonado Ventura.\n"
+        Text gameTitle = new Text("Quaestiones");
+        gameTitle.setStyle("-fx-font-style: italic;");
+        Text copyrightFooter = new Text(" © 2016 Jorge Maldonado Ventura.\n"
             + "Este programa es software libre: usted puede redistruirlo y/o modificarlo "+
             "bajo los términos de la Licencia Pública General GNU, tal y como está publicada por" +
             " la Free Software Foundation; ya sea la versión 3 de la Licencia, o" +
             " (a su elección) cualquier versión posterior."
         );
-        TextFlow copyrightFter = new TextFlow(copyrightFooter);
+        TextFlow copyrightFter = new TextFlow(gameTitle, copyrightFooter);
         copyrightFter.setTextAlignment(TextAlignment.CENTER);
         copyrightFter.setId("copyright");
                 
         Button back = new Button("Volver atrás");
         back.setOnAction(e -> GameMenus.createMenu());
         
-        creditsMenu.getChildren().addAll(title, credits, GPL, copyrightFter, back);
         
         Scene creditsScene = new Scene(creditsMenu, WIDTH, HEIGHT);
-        creditsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        ImageView GPL;
+        if(WIDTH == 320 && HEIGHT == 480){
+            GPL = new ImageView(new Image("/GPL.jpg", 100, 50, true, false));
+            creditsScene.getStylesheets().add(UI.GameWindow.class.getResource("menu.css").toExternalForm());
+        } else{
+            GPL = new ImageView(new Image("/GPL.jpg", 200, 100, true, false));
+            creditsScene.getStylesheets().add(UI.GameWindow.class.getResource("menuBig.css").toExternalForm());
+        }
+        creditsMenu.getChildren().addAll(title, credits, GPL, copyrightFter, back);
         Quaestiones.stage.setScene(creditsScene);
         
     }

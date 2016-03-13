@@ -136,7 +136,16 @@ public class GameWindow {
         BackgroundStyle.setResizableBackground(grid, "bubbleBackground.png");
         
         if(turn > 20 && p1Points != p2Points){
-            playAgain();
+            used1Answers = new ArrayList<>();
+            used2Answers = new ArrayList<>();
+            used3Answers = new ArrayList<>();
+            used4Answers = new ArrayList<>();
+            used5Answers = new ArrayList<>();
+            used6Answers = new ArrayList<>();
+            turn = 1;
+            p1Points = 0;
+            p2Points = 0;
+            playAgain();      
             return;
         }
         grid.getStyleClass().add("grid");
@@ -543,15 +552,6 @@ public class GameWindow {
         //\\No
         yes.setOnAction(e -> 
             {
-                used1Answers = new ArrayList<>();
-                used2Answers = new ArrayList<>();
-                used3Answers = new ArrayList<>();
-                used4Answers = new ArrayList<>();
-                used5Answers = new ArrayList<>();
-                used6Answers = new ArrayList<>();
-                turn = 1;
-                p1Points = 0;
-                p2Points = 0;
                 EnterNames.enterNames();
             }
         );

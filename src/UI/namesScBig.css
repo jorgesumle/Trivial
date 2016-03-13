@@ -15,18 +15,24 @@ Usted debería haber recibido una copia de la Licencia Pública General GNU
 junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
 */
 /* 
-    Created on : 20-feb-2016, 16:29:57
-    Author     : Jorge Maldonado Ventura 
+    Created on : 07-mar-2016, 13:45:36
+    Author     : Jorge Maldonado Ventura
 */
-
+.text{
+    -fx-font-size: 34px;
+}
+.text-field{
+    -fx-min-width: 34;
+    -fx-min-height: 34;
+    -fx-font-size: 34px;
+}
 .label {
-    -fx-font-size: 17px;
+    -fx-font-size: 34px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
     -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
 }
 .button{
-    -fx-font-size: 17px;
     -fx-text-fill: white;
     -fx-font-family: "Arial Narrow";
     -fx-font-weight: bold;
@@ -43,3 +49,4 @@ junto a este programa.  Si no es así, vea <http://www.gnu.org/licenses/>.
 .button:pressed {
     -fx-background-color: linear-gradient(#4A5058, #A1a2b1);
 }
+
