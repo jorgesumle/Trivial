@@ -21,7 +21,7 @@ import Console.Answer;
 import Console.Question;
 import Console.StringFormat;
 import Console.Quaestiones;
-import java.nio.file.Paths;
+import java.net.URL;
 import java.util.ArrayList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -37,8 +37,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.AudioClip;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
@@ -135,19 +134,11 @@ public class GameWindow {
         grid.setVgap(5);
         BackgroundStyle.setResizableBackground(grid, "bubbleBackground.png");
         
-        if(turn > 20 && p1Points != p2Points){
-            used1Answers = new ArrayList<>();
-            used2Answers = new ArrayList<>();
-            used3Answers = new ArrayList<>();
-            used4Answers = new ArrayList<>();
-            used5Answers = new ArrayList<>();
-            used6Answers = new ArrayList<>();
-            turn = 1;
-            p1Points = 0;
-            p2Points = 0;
-            playAgain();      
+        if(checkGameOver()){
             return;
         }
+        
+        
         grid.getStyleClass().add("grid");
         grid.setAlignment(Pos.CENTER);
         
@@ -445,7 +436,8 @@ public class GameWindow {
             grid.setHalignment(victoryImage, HPos.CENTER);
 
             if(GameMenus.isSoundOn){
-                MediaPlayer applause = new MediaPlayer(new Media(Paths.get("src/applause.wav").toUri().toString()));
+                URL applauseFile = GameMenus.class.getResource("/applause.wav");
+                AudioClip applause = new AudioClip(applauseFile.toString());
                 applause.play();
             }
             if(turn % 2 == 1){
@@ -461,7 +453,8 @@ public class GameWindow {
             grid.setHalignment(defeatImage, HPos.CENTER);
            
             if(GameMenus.isSoundOn){
-                MediaPlayer failSound = new MediaPlayer(new Media(Paths.get("src/fail.mp3").toUri().toString()));
+                URL failSoundFile = GameMenus.class.getResource("/fail.mp3");
+                AudioClip failSound = new AudioClip(failSoundFile.toString());
                 failSound.play();
             }
             if(answer.TYPE_OF_ANSWER == 3){
@@ -566,14 +559,37 @@ public class GameWindow {
      * @return el nombre del jugador que ha conseguido más puntos.
      */
     private static String getWinner(){
-        String winner; 
+        String winner = "ninguno"; //Nunca debería tener este valor. 
         if(p1Points > p2Points){
             winner = EnterNames.player1Name;
         } else if(p2Points > p1Points){
             winner = EnterNames.player2Name;
-        } else{ //Nunca debería ocurrir esto.
-            winner = "ninguno";
         }
         return winner;
+    }
+    /**
+     * Comprueba si la partida ha terminado. Las reglas del juego indican que la
+     * partida acabará tras el turno 20 si algún jugador supera al otro en puntos.
+     * En caso de empate se continúa jugando hasta que alguno de los jugadores supere
+     * al otro. Esto último se comprueba en los turnos pares para que el
+     * jugador con el primer turno no tenga ventaja sobre el otro.
+     * @return <i>true</i> si ha terminado la partida.
+     */
+    private static boolean checkGameOver() {
+        boolean gameOver = false;
+        if(turn > 20 && p1Points != p2Points && turn % 2 != 0){
+            playAgain();
+            used1Answers = new ArrayList<>();
+            used2Answers = new ArrayList<>();
+            used3Answers = new ArrayList<>();
+            used4Answers = new ArrayList<>();
+            used5Answers = new ArrayList<>();
+            used6Answers = new ArrayList<>();
+            turn = 1;
+            p1Points = 0;
+            p2Points = 0; 
+            gameOver = true;
+        }
+        return gameOver;
     }
 }
